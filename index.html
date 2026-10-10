@@ -213,7 +213,7 @@ header,.panel,.summary,.stop,.extras,.primary,.secondary,.map-btn,.map-shell,.th
   transition:background-color .32s ease,color .32s ease,border-color .32s ease,box-shadow .32s ease;
 }
 .map-shell,#map{background:var(--bg-app)!important}
-html[data-theme="night"] .map-shell,#map{background:#102d30!important}
+html[data-theme="night"] .map-shell,html[data-theme="night"] #map{background:#102d30!important}
 html[data-theme="night"] .map-shell[data-map-layer="streets"] .leaflet-tile-pane{filter:invert(.87) hue-rotate(170deg) saturate(.72) brightness(.82) contrast(1.08)}
 html[data-theme="night"] .map-shell[data-map-layer="satellite"] .leaflet-tile-pane{filter:none}
 html[data-theme="night"] .fallback{background:#173d37!important;color:#fff3da!important}
