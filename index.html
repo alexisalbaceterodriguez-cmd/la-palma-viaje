@@ -757,7 +757,7 @@ function status(cl,headline,message,next,margin,note){
  $('paceNext').textContent=next;$('paceMargin').textContent=margin;
  $('paceNote').textContent=note||'Los tiempos son orientativos y nunca incluyen tráfico en directo ni el estado en vivo del vuelo.';
 }
-function destination(d,done){const e=fixedEvent(d,done);return e?.id||chooseStop(d,done)}
+function destination(d,done){if(d.id===1&&position&&isOnIsland(position)){if(!done.olas)return 'olas';return d.items.find(id=>id!=='airport'&&!done[id])||null}const e=fixedEvent(d,done);return e?.id||chooseStop(d,done)}
 function routeIsCurrent(d,now){return route&&route.dayId===d.id&&route.positionAt===positionAt&&Date.now()-routeAt<5*60*1000&&now.day===targetDate(d.id)}
 function update(){
  const now=islandNow(),d=selectedDay(),done=visited();$('paceClock').textContent=now.clock;
@@ -776,13 +776,16 @@ function update(){
  }
  // The PDF fixes the landing time, but has no fixed closing time for Santa Cruz's optional walk.
  if(d.id===1){
-  const landing=16*60+delay, hasLanded=done.airport;
-  const short=delay>=60;
+  const landing=16*60+delay, hasLanded=done.airport, onIsland=isOnIsland(position);
+  const short=delay>=60, road=routeIsCurrent(d,now)?route:null;
+  const to=destination(d,done);
+  const drive=onIsland&&road&&to?` Hasta ${placeName(to)}: unos ${Math.ceil(road.minutes)} min en coche, sin tráfico.`:onIsland&&to?' Pulsa «Actualizar» para estimar el próximo desplazamiento.':'';
+  const nextText=onIsland&&to?`Siguiente: ${placeName(to)}`:next;
   status(short?'warning':'good',short?'Tarde más ajustada':'Primera tarde en marcha',
-   hasLanded?'Aeropuerto marcado como completado. Prioriza el coche y el hotel; después elige las visitas opcionales.':
-   `Vuelo: llegada prevista a las ${hm(landing)} (${delay} min de retraso indicado). No se comprueba en tiempo real.`,
-   next, `${optionalLeft} paseos opcionales · ${base}`,
-   'No hay hora límite para pasear en Santa Cruz según el PDF. Más retraso no implica perder ninguna reserva de hoy.');
+   (hasLanded?'Aeropuerto marcado como completado. Prioriza el coche y el hotel; después elige las visitas opcionales.':onIsland?'Tu ubicación indica que ya estás en La Palma. Prioriza la recogida del coche y el hotel.':
+   `Vuelo: llegada prevista a las ${hm(landing)} (${delay} min de retraso indicado). No se comprueba en tiempo real.`)+drive,
+   nextText, `${optionalLeft} paseos opcionales · ${base}`,
+   'No hay hora límite para pasear en Santa Cruz según el PDF. El GPS y las rutas son orientativos y no detectan automáticamente el aterrizaje.');
   return;
  }
  const ev=fixedEvent(d,done);
