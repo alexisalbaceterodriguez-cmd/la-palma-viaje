@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#112620">
   <meta name="description" content="Mapa interactivo del viaje a La Palma, 10 al 17 de octubre. Rutas por día, puntos de interés, alojamientos y enlaces a Maps y Wikiloc.">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="icon" href="./icon-192.png" type="image/png">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="preconnect" href="https://tile.openstreetmap.org">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" onerror="this.onerror=null;this.removeAttribute('integrity');this.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css'">
@@ -296,12 +296,59 @@ html[data-theme="night"] .splash-orbit{opacity:.16;width:83%}
 @media(max-width:360px){.map-mode-btn{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.map-view-strip,.map-shell.map-floating,.map-restore{transition:none!important}}
 </style>
+
+<style id="palma-pace-styles">
+/* Tour-paced assistant. It never changes or recreates the Leaflet map. */
+.logo,.splash-mark{overflow:hidden;isolation:isolate;background:#f9d4a1!important;border-radius:13px!important}
+.logo{width:45px!important;height:45px!important;box-shadow:0 3px 15px #051c1433;flex-shrink:0}
+.logo img,.splash-mark img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.06)}
+.splash-mark{width:53px!important;height:53px!important;border-radius:17px!important}
+.pace-coach{--pace-color:#226e49;--pace-soft:#e2f4e5;--pace-outline:#b6ddc1;margin:12px 16px 5px;padding:14px;border:1px solid var(--pace-outline);border-radius:19px;color:var(--text-main,#153f33);background:linear-gradient(135deg,var(--pace-soft),var(--bg-surface,#fffdf8) 78%);box-shadow:0 7px 27px #102b1a14;position:relative;overflow:hidden}
+.pace-coach.is-idle{--pace-color:#557467;--pace-soft:#e8f0e9;--pace-outline:#d0e0d2}
+.pace-coach.is-good{--pace-color:#197146;--pace-soft:#e2f7e8;--pace-outline:#b2ddc3}
+.pace-coach.is-warning{--pace-color:#af5c0d;--pace-soft:#fff0d6;--pace-outline:#e8c78d}
+.pace-coach.is-danger{--pace-color:#b92b35;--pace-soft:#ffebea;--pace-outline:#efc2c3}
+.pace-upper{display:flex;align-items:center;gap:12px}
+.pace-portrait{height:65px;width:65px;flex:0 0 65px;overflow:hidden;border-radius:19px;background:#fff2d7;box-shadow:0 3px 13px #12301d14}
+.pace-portrait img{width:100%;height:100%;object-fit:cover}
+.pace-copy{min-width:0;flex:1}
+.pace-eyebrow{font-size:10px;line-height:1.6;letter-spacing:.06em;font-weight:900;color:var(--pace-color)}
+.pace-eyebrow span{font-variant-numeric:tabular-nums;background:#fff8;border-radius:10px;padding:2px 5px;white-space:nowrap}
+.pace-copy h3{font-family:Fraunces,Georgia,serif;font-size:19px;font-weight:700;line-height:1.15;margin:3px 0 5px;color:var(--pace-color)}
+.pace-copy p{font-size:12px;line-height:1.5;color:var(--text-main,#153f33);margin:0;overflow-wrap:anywhere}
+.pace-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
+.pace-stat{background:#fff8;border:1px solid #fff8;border-radius:10px;font-size:11px;line-height:1.35;padding:8px;overflow-wrap:anywhere}
+.pace-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.pace-action{color:var(--text-main,#153f33);background:var(--bg-card,#fff);border:1px solid var(--border-ui,#cbdad0);border-radius:11px;min-height:38px;flex:1 1 auto;padding:7px 9px;font-size:11px;font-weight:850;cursor:pointer}
+.pace-action.primary{background:var(--pace-color);color:#fff;border-color:var(--pace-color);flex-grow:2}
+.pace-action:focus-visible,.pace-options input:focus-visible{outline:3px solid var(--accent-ui,#56b591);outline-offset:2px}
+.pace-action:disabled{opacity:.55;cursor:wait}
+.pace-options{padding:10px 1px 0;font-size:12px;line-height:1.5}
+.pace-options[hidden]{display:none!important}
+.pace-label{font-weight:800;display:block;margin:4px 0 6px}
+.pace-delay-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.pace-delay-row input{font-size:15px;width:95px;min-height:40px;padding:8px;border:1px solid var(--border-ui,#cbdad0);border-radius:11px;background:var(--bg-card,#fff);color:var(--text-main,#153f33)}
+.pace-delay-row span{color:var(--text-soft,#5b7a67);font-size:11px}
+.pace-follow{display:flex;gap:9px;align-items:flex-start;margin:12px 0 6px;font-weight:700}
+.pace-follow input{width:17px;height:17px;accent-color:var(--accent-ui,#15704b);flex-shrink:0}
+.pace-disclosure{font-size:10px;line-height:1.55;color:var(--text-soft,#5b7a67);margin:8px 0 0}
+.pace-note{margin-top:9px;border-top:1px solid var(--pace-outline);padding-top:8px;font-size:10px;line-height:1.45;color:var(--text-soft,#597769)}
+html[data-theme="night"] .pace-coach{--pace-soft:#123d39;--pace-outline:#437067;--pace-color:#e5d6a6;background:linear-gradient(125deg,var(--pace-soft),#0b322f 80%);box-shadow:0 12px 32px #0003}
+html[data-theme="night"] .pace-coach.is-good{--pace-color:#94dfba;--pace-outline:#356c57;--pace-soft:#123e35}
+html[data-theme="night"] .pace-coach.is-warning{--pace-color:#ffd186;--pace-outline:#715c34;--pace-soft:#453a25}
+html[data-theme="night"] .pace-coach.is-danger{--pace-color:#ffadae;--pace-outline:#805051;--pace-soft:#452f36}
+html[data-theme="night"] .pace-stat{background:#082d2da3;border-color:#ffffff15}
+html[data-theme="night"] .pace-action.primary{color:#112c25}
+@media(min-width:880px){.pace-coach{margin:18px 22px 4px}}
+@media(max-width:360px){.pace-coach{margin:9px 10px 4px;padding:10px}.pace-portrait{width:50px;height:50px;flex-basis:50px}.pace-copy h3{font-size:17px}.pace-stats{grid-template-columns:1fr}.pace-action{font-size:10px;padding:7px 6px}}
+@media(prefers-reduced-motion:reduce){.pace-coach,.pace-action,.logo{transition:none!important;animation:none!important}}
+</style>
 </head>
 <body>
 <section id="splash" hidden aria-label="Bienvenida a La Palma" role="status" aria-live="off">
   <div class="splash-aurora" aria-hidden="true"></div><div class="splash-stars" aria-hidden="true"></div>
   <div class="splash-frame">
-    <div class="splash-brand"><div class="splash-mark" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><path d="M6 36 19 10l11 18 6-9 8 17H6Z" fill="#124633"/><circle cx="36" cy="11" r="5" fill="#d9793c"/></svg></div><div class="splash-kicker">NUESTRO VIAJE · 10–17 OCTUBRE</div><h2 class="splash-title">La Palma</h2></div>
+    <div class="splash-brand"><div class="splash-mark" aria-hidden="true"><img src="./icon-192.png" alt="" width="49" height="49" decoding="async"></div><div class="splash-kicker">NUESTRO VIAJE · 10–17 OCTUBRE</div><h2 class="splash-title">La Palma</h2></div>
     <div class="splash-art-wrap" aria-hidden="true"><div class="splash-orbit"></div><div class="splash-art day"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 480" fill="none" role="img" aria-label="Isla con volcán sonriente, palmeras y mar turquesa">
 <defs><linearGradient id="sea" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b1e7d6"/><stop offset=".6" stop-color="#52b8b2"/><stop offset="1" stop-color="#267f8d"/></linearGradient><linearGradient id="cone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#3d6d58"/><stop offset=".5" stop-color="#254f43"/><stop offset="1" stop-color="#102b2a"/></linearGradient><linearGradient id="lava" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffd573"/><stop offset=".4" stop-color="#f18e3d"/><stop offset="1" stop-color="#d34e26"/></linearGradient><radialGradient id="sky"><stop stop-color="#fff2bd" stop-opacity=".95"/><stop offset="1" stop-color="#fff2bd" stop-opacity="0"/></radialGradient><filter id="shadow"><feGaussianBlur stdDeviation="10"/></filter></defs>
 <circle cx="132" cy="108" r="106" fill="url(#sky)"/><circle cx="112" cy="94" r="32" fill="#ffd681" opacity=".85"/>
@@ -343,7 +390,7 @@ html[data-theme="night"] .splash-orbit{opacity:.16;width:83%}
 <div class="app">
  <header>
   <div class="mast">
-   <div class="brand"><div class="logo" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><path d="M8 34 19 12l9 14 6-7 6 15H8Z" fill="#1c5140"/><path d="m15 26 4-14 9 14" stroke="#a7713a" stroke-width="2" stroke-linejoin="round"/><circle cx="35" cy="12" r="5" fill="#d68d48"/></svg></div><div><div class="eyebrow">Nuestro viaje · 10–17 octubre</div><h1>La Palma</h1></div></div>
+   <div class="brand"><div class="logo" aria-hidden="true"><img src="./icon-192.png" width="48" height="48" alt="" decoding="async"></div><div><div class="eyebrow">Nuestro viaje · 10–17 octubre</div><h1>La Palma</h1></div></div>
    <div class="header-actions"><button class="head-btn" type="button" id="allButton" title="Ver todos los puntos" aria-label="Ver toda la isla"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15m6-12v15"/></svg><span>Todos</span></button><button class="head-btn" type="button" id="shareButton" aria-label="Compartir itinerario"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V3m0 0L7 8m5-5 5 5M5 13v7h14v-7"/></svg><span>Compartir</span></button></div>
   </div>
   <div class="days-scroll" role="tablist" id="tabs" aria-label="Días del viaje"></div>
@@ -357,6 +404,30 @@ html[data-theme="night"] .splash-orbit{opacity:.16;width:83%}
     <button class="map-mode-btn" type="button" data-map-mode="float" aria-pressed="false">▣ Flotante</button>
     <button class="map-mode-btn" type="button" data-map-mode="hidden" aria-pressed="false">✕ Ocultar</button>
    </nav>
+
+   <section id="paceCoach" class="pace-coach is-idle" aria-label="Asistente de horario y localización">
+     <div class="pace-upper">
+       <div class="pace-portrait"><img src="./icon-192.png" alt="" width="68" height="68" decoding="async"></div>
+       <div class="pace-copy">
+         <div class="pace-eyebrow">MI RITMO · HORA DE LA PALMA <span id="paceClock">--:--</span></div>
+         <h3 id="paceHeadline">¿Vamos bien de tiempo?</h3>
+         <p id="paceMessage">Analizando el día seleccionado…</p>
+       </div>
+     </div>
+     <div class="pace-stats"><span id="paceNext" class="pace-stat">Siguiente parada: por calcular</span><span id="paceMargin" class="pace-stat">Horarios: pendientes</span></div>
+     <div class="pace-actions">
+       <button id="paceLocation" class="pace-action primary" type="button">◎ Comprobar ubicación</button>
+       <button id="paceSettings" class="pace-action" type="button" aria-expanded="false" aria-controls="paceOptions">⚙ Ajustes</button>
+       <button id="paceRefresh" class="pace-action" type="button">↻ Actualizar</button>
+     </div>
+     <div id="paceOptions" class="pace-options" hidden>
+       <label class="pace-label" for="paceDelay">Retraso estimado del vuelo de ida, en minutos</label>
+       <div class="pace-delay-row"><input id="paceDelay" type="number" inputmode="numeric" min="0" max="360" step="15" value="90"><span>Previsto: 16:00 · La Palma</span></div>
+       <label class="pace-follow"><input type="checkbox" id="paceTracking"> Actualizar mi posición mientras tenga la web abierta</label>
+       <p class="pace-disclosure">La ubicación solo se solicita con tu permiso. Si compruebas la ruta por carretera, las coordenadas del trayecto se envían a un servicio externo (OSRM) para calcular tiempos aproximados, sin tráfico en directo. No guardamos tu GPS ni consultamos el estado real del vuelo.</p>
+     </div>
+     <div class="pace-note" id="paceNote">Toca «Comprobar ubicación» para compartir tu posición con OSRM y estimar el trayecto en coche. No sustituye a la aerolínea ni a la navegación.</div>
+   </section>
    <div id="dayDetail"></div>
    <section class="extras" id="extras"><div class="sup">Plan B</div><h3>Si queda tiempo</h3><p>Rutas opcionales incluidas en el PDF, no asignadas a un día concreto.</p><div id="extraItems"></div></section>
    <div class="footnote">Mapa basado en el itinerario del PDF. Las líneas de puntos muestran el <b>orden propuesto</b>, no el trazado real de la carretera. Google Maps calcula la ruta de conducción. Comprueba horarios, cierres y permisos antes de salir.<br><br>Mapa base © OpenStreetMap contributors. Los puntos visitados se guardan solo en este dispositivo.</div>
@@ -645,6 +716,199 @@ window.leafletReady = new Promise((resolve) => {
  apply();
  window.LaPalmaMapLayout={setMode,toggleExpand,isHidden:()=>mode==='hidden',getMode:()=>mode,getPreference:()=>preference,onDayChanged};
 })();
+</script>
+<script id="palma-pace-module">
+(()=>{'use strict';
+// All comparisons are made in Atlantic/Canary. No browser geolocation without an explicit click.
+const ZONE='Atlantic/Canary', DELAY_KEY='palma-flight-delay-min-v1';
+const $=id=>document.getElementById(id), data=window.TRIP_DATA || (typeof TRIP_DATA!=='undefined'?TRIP_DATA:null);
+if(!data||!$('paceCoach'))return;
+const {places,days}=data;
+let delay=90,position=null,positionAt=0,checking=false,watchId=null,route=null,routeKey='',routeAt=0,routeAbort=null,requestSerial=0;
+try{let stored=localStorage.getItem(DELAY_KEY);if(stored!==null&&Number.isFinite(+stored))delay=Math.max(0,Math.min(360,Math.round(+stored/15)*15))}catch{}
+$('paceDelay').value=String(delay);
+const dateParts=new Intl.DateTimeFormat('en-GB',{timeZone:ZONE,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
+const clockFmt=new Intl.DateTimeFormat('es-ES',{timeZone:ZONE,hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
+const pad=n=>String(n).padStart(2,'0');
+function islandNow(date=new Date()){
+ const p={};for(const x of dateParts.formatToParts(date))if(x.type!=='literal')p[x.type]=+x.value;
+ return {day:`${p.year}-${pad(p.month)}-${pad(p.day)}`,minutes:p.hour*60+p.minute,clock:clockFmt.format(date)};
+}
+const targetDate=id=>`2026-10-${pad(id+9)}`;
+function selectedDay(){const raw=new URLSearchParams(location.search).get('dia');
+ const id=raw===null?(() => {const today=islandNow().day;const d=days.find(d=>targetDate(d.id)===today);return d?.id||1})():Number(raw);
+ return days.find(d=>d.id===id)||null;
+}
+function visited(){try{const obj=JSON.parse(localStorage.getItem('lapalma-visited-v1')||'{}');return obj&&typeof obj==='object'?obj:{}}catch{return {}}}
+function left(min){if(min<0)return `Hace ${Math.abs(Math.round(min))} min`;return `${Math.round(min)} min`}
+function hm(min){const cl=Math.max(0,Math.round(min));return `${pad(Math.floor(cl/60)%24)}:${pad(cl%60)}`}
+function placeName(id){return places[id]?.name||id}
+function isOnIsland(c){return c&&c[0]>28.35&&c[0]<28.95&&c[1]>-18.17&&c[1]<-17.53}
+function chooseStop(d,done){return d.items.find(id=>!done[id]&&!d.optional.includes(id))||d.items.find(id=>!done[id])||null}
+function fixedEvent(d,done){
+ if(d.id===3&&!done.piedras)return {id:'piedras',start:10*60+45,preferred:10*60+30,type:'tour'};
+ if(d.id===4&&!done.cumbrecita)return {id:'cumbrecita',start:9*60,preferred:9*60,end:11*60,type:'window'};
+ if(d.id===8&&!done.airport)return {id:'airport',start:14*60+50,preferred:14*60+50,hard:16*60,type:'return'};
+ return null;
+}
+function status(cl,headline,message,next,margin,note){
+ const el=$('paceCoach');el.classList.remove('is-idle','is-good','is-warning','is-danger');el.classList.add(`is-${cl}`);
+ $('paceHeadline').textContent=headline;$('paceMessage').textContent=message;
+ $('paceNext').textContent=next;$('paceMargin').textContent=margin;
+ $('paceNote').textContent=note||'Los tiempos son orientativos y nunca incluyen tráfico en directo ni el estado en vivo del vuelo.';
+}
+function destination(d,done){const e=fixedEvent(d,done);return e?.id||chooseStop(d,done)}
+function routeIsCurrent(d,now){return route&&route.dayId===d.id&&route.positionAt===positionAt&&Date.now()-routeAt<5*60*1000&&now.day===targetDate(d.id)}
+function update(){
+ const now=islandNow(),d=selectedDay(),done=visited();$('paceClock').textContent=now.clock;
+ if(!d){status('idle','Explora los ocho días','Elige una fecha arriba para comprobar el ritmo de ese día.','Ruta completa · 8 días','GPS opcional');return}
+ const completed=d.items.filter(id=>done[id]).length, remaining=d.items.length-completed;
+ const optionalLeft=d.optional.filter(id=>!done[id]).length, base=`${completed}/${d.items.length} visitas marcadas`;
+ const nextId=chooseStop(d,done);const next=nextId?`Siguiente: ${placeName(nextId)}`:'Todas las paradas marcadas';
+ if(now.day!==targetDate(d.id)){
+  if(d.id===1&&now.day<targetDate(1)){
+   status('idle','Vuelo con retraso anotado',`Aterrizaje estimado ${hm(16*60+delay)} (+${delay} min sobre lo previsto). La hora es manual y no un seguimiento del vuelo.`,next,`Plan: 16:00 · Ajuste +${delay} min`, 'Prioriza el coche y el check-in. Las visitas de Santa Cruz son opcionales.');
+  }else {
+   const relation=now.day<targetDate(d.id)?'todavía no ha llegado':'ya ha pasado';
+   status('idle',`Día ${d.id}: planificación`,`La fecha seleccionada ${relation}. El semáforo en directo se activa solo en la jornada correspondiente.`,next,base,'La web muestra el plan original, no calcula retrasos sobre fechas distintas.');
+  }
+  return;
+ }
+ // The PDF fixes the landing time, but has no fixed closing time for Santa Cruz's optional walk.
+ if(d.id===1){
+  const landing=16*60+delay, hasLanded=done.airport;
+  const short=delay>=60;
+  status(short?'warning':'good',short?'Tarde más ajustada':'Primera tarde en marcha',
+   hasLanded?'Aeropuerto marcado como completado. Prioriza el coche y el hotel; después elige las visitas opcionales.':
+   `Vuelo: llegada prevista a las ${hm(landing)} (${delay} min de retraso indicado). No se comprueba en tiempo real.`,
+   next, `${optionalLeft} paseos opcionales · ${base}`,
+   'No hay hora límite para pasear en Santa Cruz según el PDF. Más retraso no implica perder ninguna reserva de hoy.');
+  return;
+ }
+ const ev=fixedEvent(d,done);
+ if(ev){
+  const passed=now.minutes>=(ev.hard??ev.end??ev.start);
+  const road=routeIsCurrent(d,now)?route:null;
+  let eta=road?.minutes??null;
+  if(position&&!isOnIsland(position))eta=null;
+  const availability=ev.start-now.minutes, arrival=eta==null?null:now.minutes+eta;
+  const valid=eta!==null && Number.isFinite(eta);
+  const label=placeName(ev.id);
+  if(passed && !done[ev.id]){
+   status('danger','Comprueba el compromiso',`La hora indicada para ${label} ya ha pasado y aún no lo has marcado como realizado.`,
+    `Pendiente: ${label}`,`Referencia: ${hm(ev.start)} · ${base}`, 'No se ha confirmado una cancelación: revisa tu reserva y la situación real antes de actuar.');
+   return;
+  }
+  if(valid){
+   const cushion=ev.preferred-arrival;
+   const hardPassed=ev.type==='return'&&arrival>ev.hard;
+   const late=ev.type==='window'?(arrival>ev.end):(ev.type==='return'?hardPassed:(arrival>ev.start));
+   const warning=ev.type==='window'?arrival>ev.start:cushion<20;
+   const cl=late?'danger':warning?'warning':'good';
+   let msg=`A ${label}: ${Math.ceil(eta)} min en coche (sin tráfico). Llegada aproximada ${hm(arrival)}.`;
+   if(ev.type==='window')msg+=` Ventana indicada ${hm(ev.start)}–${hm(ev.end)}.`;
+   else if(ev.type==='return')msg+=' El coche debe devolverse antes de las 16:00.';
+   else msg+=' El tour comienza a las 10:45.';
+   status(cl,late?'Vas tarde para el horario':warning?'Vas justo de tiempo':'Vas con margen',msg,
+    `Próximo: ${label}`,`Margen orientativo: ${cushion>=0?'+':''}${Math.round(cushion)} min`,
+    `${road?.source==='osrm'?'Ruta por carretera OSRM, sin tráfico.':'Estimación aproximada.'} Son recomendaciones, no garantía de llegar. Confirma accesos, aparcamiento y reservas.`);
+   return;
+  }
+  if(!position){
+   status(availability<=20?'warning':'idle',availability<=20?'Hora del compromiso cercana':'Próxima visita con horario',
+    `${label}: ${ev.type==='window'?'acceso previsto ':ev.type==='return'?'llegada objetivo ':'inicio '}${hm(ev.start)}. Activa la ubicación para calcular el viaje en coche.`,
+    `Objetivo: ${label}`,`Faltan ${left(availability)} · GPS pendiente`,'No podemos decidir si llegas a tiempo sin una posición reciente y una estimación de desplazamiento.');
+  } else {
+   status('idle','Calculando trayecto',isOnIsland(position)?`Tenemos tu posición, pero no una ruta por carretera actualizada hacia ${label}. Pulsa «Actualizar».`:'Tu ubicación parece estar fuera de La Palma. El cálculo por carretera se habilitará al llegar.',
+    `Objetivo: ${label}`,`Hora prevista: ${hm(ev.start)}`,'Sin datos de carretera no sería fiable decirte que vas bien o mal de tiempo.');
+  }
+  return;
+ }
+ if(d.id===8&&done.airport){status('good','Aeropuerto marcado','Has marcado tu llegada al aeropuerto. El vuelo de vuelta está previsto a las 16:50.',next,base,'Comprueba mostradores y puerta de embarque con la aerolínea.');return}
+ if(remaining===0){status('good','¡Jornada completada!',`Has marcado todas las visitas del día ${d.id}.`,next,base,'¡Bien! Las marcas son manuales: no equivalen a haber visitado realmente cada lugar.');return}
+ if(position&&isOnIsland(position)){
+  const road=routeIsCurrent(d,now)?route:null;
+  const roadText=road?`El siguiente desplazamiento en coche se estima en ${Math.ceil(road.minutes)} min sin tráfico.`:'Pulsa «Actualizar» para estimar el siguiente desplazamiento.';
+  status('idle','Día de ritmo flexible',`${roadText} El PDF no fija horas para todas estas visitas.`,next,`${remaining} pendientes (${optionalLeft} opcionales)`,
+  'Sin una hora límite acordada no se puede asegurar que vayas tarde. Prioriza o acorta las visitas cuando lo necesites.');
+ }else{
+  status('idle','Día de ritmo flexible',`Quedan ${remaining} visitas. Comprueba tu posición para saber cuánto se tarda en coche hasta la próxima parada.`,next,`${optionalLeft} opcionales · ${base}`,
+  'Este día no tiene plazos rígidos documentados. La app no inventa obligaciones ni horarios.');
+ }
+}
+function setPaceDelay(v){const n=Math.round(Number(v)/15)*15;if(!Number.isFinite(n))return;
+ delay=Math.min(360,Math.max(0,n));$('paceDelay').value=String(delay);try{localStorage.setItem(DELAY_KEY,String(delay))}catch{}update()}
+function geolocate(){if(!navigator.geolocation||!window.isSecureContext){status('idle','Ubicación no disponible','Necesitas una conexión HTTPS y permisos de localización para calcular el desplazamiento.','Sin GPS','Comprueba ajustes del navegador');return}
+ $('paceLocation').disabled=true;$('paceLocation').textContent='Localizando…';
+ navigator.geolocation.getCurrentPosition(pos=>{acceptPosition(pos);$('paceLocation').disabled=false;$('paceLocation').textContent='◎ Actualizar ubicación';},err=>{
+ $('paceLocation').disabled=false;$('paceLocation').textContent='◎ Comprobar ubicación';
+ status('idle','Ubicación sin permiso',err.code===1?'Autoriza el acceso a la ubicación desde los ajustes del navegador.':'No se pudo obtener la posición. Puedes seguir usando el itinerario.','GPS desactivado','Sin cálculo de carretera');
+ },{enableHighAccuracy:false,timeout:15000,maximumAge:60000});
+}
+function acceptPosition(pos){
+ const coords=[pos.coords.latitude,pos.coords.longitude];if(!coords.every(Number.isFinite))return;
+ position=coords;positionAt=Date.now();route=null;routeKey='';
+ update(); if(isOnIsland(position))lookupRoad();
+}
+async function lookupRoad(){
+ const d=selectedDay(),done=visited(),now=islandNow();
+ if(!d||!position||!isOnIsland(position)||now.day!==targetDate(d.id))return;
+ const key=destination(d,done),to=places[key]?.coords;
+ if(!to){update();return}
+ const myKey=`${d.id}:${key}:${position.map(n=>n.toFixed(3)).join(',')}`;
+ if(routeKey===myKey&&route&&Date.now()-routeAt<4*60000){update();return}
+ if(routeAbort)routeAbort.abort();const controller=new AbortController();routeAbort=controller;
+ const serial=++requestSerial;
+ // Public OSRM demo service. No tracking, and no GPS coordinates are stored or sent except on request.
+ const path=`${position[1]},${position[0]};${to[1]},${to[0]}`;
+ const url=`https://router.project-osrm.org/route/v1/driving/${path}?overview=false&alternatives=false`;
+ let timeout=setTimeout(()=>controller.abort(),8000);
+ try{
+ const response=await fetch(url,{signal:controller.signal,headers:{Accept:'application/json'}});
+ if(!response.ok)throw new Error(`HTTP ${response.status}`);
+ const json=await response.json();
+ if(serial!==requestSerial)return;
+ if(json.code!=='Ok'||!json.routes?.[0]?.duration)throw Error('No road route');
+ const duration=json.routes[0].duration/60;
+ if(!Number.isFinite(duration)||duration<0||duration>900)throw Error('Out of range');
+ route={minutes:duration,dayId:d.id,positionAt,source:'osrm'};routeKey=myKey;routeAt=Date.now();
+ }catch(e){if(serial!==requestSerial)return;route=null;routeKey='';}
+ finally{clearTimeout(timeout);if(serial===requestSerial){routeAbort=null;update()}}
+}
+function clearWatch(){if(watchId!==null&&navigator.geolocation){navigator.geolocation.clearWatch(watchId);watchId=null}}
+function initWatch(enabled){if(!enabled){clearWatch();return}
+ if(!navigator.geolocation||!window.isSecureContext){$('paceTracking').checked=false;return}
+ if(watchId!==null)return;
+ watchId=navigator.geolocation.watchPosition(p=>{
+  const prev=position;
+  const next=[p.coords.latitude,p.coords.longitude];
+  if(!next.every(Number.isFinite))return;
+  if(prev&&Math.abs(prev[0]-next[0])+Math.abs(prev[1]-next[1])<.0025&&Date.now()-positionAt<4*60*1000)return;
+  acceptPosition(p);
+ },()=>{}, {enableHighAccuracy:false,timeout:20000,maximumAge:120000});
+}
+function bind(){
+ $('paceLocation').addEventListener('click',geolocate);
+ $('paceDelay').addEventListener('change',e=>setPaceDelay(e.target.value));
+ $('paceSettings').addEventListener('click',()=>{
+  const el=$('paceOptions'),expanded=el.hidden;el.hidden=!expanded;$('paceSettings').setAttribute('aria-expanded',String(expanded));
+ });
+ $('paceRefresh').addEventListener('click',()=>{update();if(position&&isOnIsland(position)){route=null;routeKey='';lookupRoad()}});
+ $('paceTracking').addEventListener('change',e=>initWatch(e.target.checked));
+ // Re-render without affecting itinerary list scroll or reinitializing Leaflet.
+ const observer=new MutationObserver(()=>{update();route=null;routeKey='';if(position&&isOnIsland(position))lookupRoad()});
+ const target=$('dayDetail');if(target)observer.observe(target,{childList:true});
+ document.getElementById('tabs')?.addEventListener('click',()=>setTimeout(update,0));
+ window.addEventListener('popstate',()=>update());
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)update()});
+ window.addEventListener('pagehide',clearWatch);
+ window.setInterval(update,60000);
+ update();
+}
+bind();
+window.LaPalmaPace={islandNow,update,setPaceDelay,getDelay:()=>delay,getPosition:()=>position,checkRoute:lookupRoad};
+})();
+
 </script>
 </body>
 </html>

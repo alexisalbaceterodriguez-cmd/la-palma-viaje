@@ -1,5 +1,5 @@
-const CACHE = 'la-palma-app-v2';
-const CORE = ['./', './index.html', './icon.svg', './icon-192.png', './icon-512.png', './manifest.webmanifest'];
+const CACHE = 'la-palma-app-v3';
+const CORE = ['./', './index.html', './icon.svg', './icon-192.png', './manifest.webmanifest'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

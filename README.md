@@ -1,29 +1,19 @@
-# La Palma · Mapa interactivo del viaje
+# La Palma · Nuestro viaje (10–17 de octubre de 2026)
 
-Sitio público para el itinerario del **10 al 17 de octubre de 2026** por La Palma, Canarias.
+Web estática con mapa interactivo, vista flotante, temas día/noche y asistente «Mi ritmo».
 
-## Abrir el mapa
+**[Abrir web](https://alexisalbaceterodriguez-cmd.github.io/la-palma-viaje/)**
 
-**https://alexisalbaceterodriguez-cmd.github.io/la-palma-viaje/**
+## «Mi ritmo» y el retraso del vuelo
 
-El enlace estará disponible cuando GitHub Pages se haya activado y el despliegue haya terminado.
+- El retraso del vuelo de ida es **manual** y comienza en +90 minutos, según la actualización de los viajeros. No se conecta a datos de aerolíneas. Es editable en **Mi ritmo → Ajustes**.
+- El cálculo se hace en hora de **Canarias**. Solo se evalúa el día actual: al consultar otra fecha, se muestra planificación, no una falsa alarma.
+- El PDF solo fija horarios para Tajogaite (12 octubre, 10:45–14:00), La Cumbrecita (13 octubre, 09:00–11:00, reserva por confirmar) y regreso (17 octubre, aeropuerto 14:50, coche antes de 16:00, vuelo 16:50).
+- El resto de visitas tienen horarios flexibles. No se afirma que el viajero vaya tarde si no hay un compromiso real.
+- GPS **con consentimiento**. Pulsar «Comprobar ubicación» permite obtener la posición en el navegador. Una consulta de ruta en coche envía origen y destino a la demo pública de OSRM. Estimación **sin tráfico en tiempo real**, sin garantías ni seguimiento de vuelos. No se guarda la posición en el servidor, solo en la memoria de la pestaña.
+- «Actualizar mi posición mientras tenga la web abierta» es opcional. Se desactiva al cerrar la página. El retraso y las visitas marcadas se guardan solo en el navegador.
+- Si falla OSRM o no hay GPS, la web sigue mostrando itinerario y horarios sin inventar tiempos de conducción.
 
-## Funciones
-- Ocho días seleccionables con puntos de interés, excursiones y alojamientos.
-- Mapa interactivo con enlaces de navegación a Google Maps.
-- Rutas originales de Wikiloc y enlaces de actividades.
-- Localización GPS, lugares visitados y vista para móvil.
-- Posibilidad de añadir la web a la pantalla de inicio.
+## Publicación
 
-## Despliegue gratuito en GitHub Pages
-1. Abrir **Settings → Pages** del repositorio.
-2. En **Build and deployment**, seleccionar **GitHub Actions** como origen.
-3. Verificar la ejecución del workflow **Publicar mapa en GitHub Pages** en la pestaña **Actions**. También se puede lanzar con *Run workflow*.
-4. Abrir el enlace público indicado arriba.
-
-Cada nuevo cambio en `main` activará la publicación automática. No son necesarios servidores ni bases de datos.
-
-## Notas
-- El mapa usa recursos cartográficos de Internet. Se necesita conexión para cargar las teselas.
-- Consultar el estado actualizado de los accesos a Los Tilos, La Cumbrecita y el volcán Tajogaite.
-- El itinerario procede del PDF original y abarca ocho días, no diez.
+GitHub Pages despliega desde `main` mediante `.github/workflows/pages.yml`. No se necesita backend, base de datos ni clave API.
