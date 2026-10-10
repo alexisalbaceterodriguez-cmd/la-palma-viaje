@@ -240,6 +240,62 @@ html[data-theme="night"] .splash-orbit{opacity:.16;width:83%}
 #splash[hidden]{display:none!important}
 
 </style>
+
+<style id="palma-map-layout-v1">
+/* The map stays mounted: docking does not recreate Leaflet layers or markers. */
+.map-view-strip{position:sticky;top:0;z-index:60;display:flex;gap:5px;padding:9px 13px;background:var(--bg-surface,#fffdf6);border-bottom:1px solid var(--border-ui,#dce7d9);box-shadow:0 2px 12px #081d1710;align-items:center}
+.map-view-caption{font-size:11px;font-weight:800;letter-spacing:.02em;color:var(--text-soft,#597769);white-space:nowrap;margin-right:5px}
+.map-mode-btn{flex:1;min-width:0;border:1px solid var(--border-ui,#dce7d9);border-radius:10px;background:var(--bg-card,#fff);color:var(--text-main,#153b30);min-height:37px;padding:7px 8px;font-weight:800;font-size:11px;cursor:pointer;white-space:nowrap;transition:background .18s,border-color .18s,box-shadow .18s}
+.map-mode-btn[aria-pressed="true"]{background:var(--accent-ui,#256e51);border-color:var(--accent-ui,#256e51);color:var(--bg-surface,#fffdf6);box-shadow:0 2px 10px #0001}
+.map-mode-btn:focus-visible,.map-drag-handle:focus-visible,.map-float-btn:focus-visible,.map-restore:focus-visible{outline:3px solid var(--accent-warm,#e48144);outline-offset:2px}
+.map-inline-actions{position:absolute;top:66px;right:16px;z-index:551;display:flex;gap:7px}
+.map-inline-actions button{font-size:11px;padding:8px 10px}
+.map-float-bar{display:none;position:absolute;top:0;left:0;right:0;z-index:1100;align-items:center;gap:3px;padding:6px;border-bottom:1px solid var(--border-ui,#dce7d9);background:var(--bg-surface,#fffdf6);color:var(--text-main,#153b30);border-radius:15px 15px 0 0;box-shadow:0 3px 12px #0002}
+.map-drag-handle{display:flex;align-items:center;justify-content:flex-start;gap:6px;flex:1;min-width:0;min-height:34px;background:transparent;border:0;border-radius:9px;padding:5px 6px;text-align:left;font-weight:800;font-size:11px;color:var(--text-main,#153b30);touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.map-drag-handle:active{cursor:grabbing}
+.map-drag-handle .grip{font-size:17px;color:var(--text-soft,#597769);line-height:1;letter-spacing:-3px}
+.map-float-btn{border:1px solid var(--border-ui,#dce7d9);border-radius:9px;background:var(--button-soft,#e7efe5);color:var(--text-main,#153b30);min-height:34px;min-width:33px;font-size:16px;font-weight:800;cursor:pointer}
+.map-restore{display:none;position:fixed;right:max(12px,env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));z-index:1450;border:1px solid var(--border-ui,#dce7d9);border-radius:999px;background:var(--header-bg,#153e32);color:var(--header-text,#fff);box-shadow:0 9px 28px #00190f50;padding:12px 17px;font-weight:800;font-size:12px;cursor:pointer}
+.map-restore.is-visible{display:inline-flex;gap:8px;align-items:center}
+/* Both desktop and mobile get a full-width itinerary in floating/hidden modes. */
+.workspace.layout-map-float,.workspace.layout-map-hidden{display:block!important}
+.workspace.layout-map-float .panel,.workspace.layout-map-hidden .panel{height:100%!important;max-height:100%;width:100%;min-height:0;overflow-y:auto;flex:1 1 auto!important;margin:0!important;border:0;border-radius:0}
+.workspace.layout-map-float #dayDetail,.workspace.layout-map-hidden #dayDetail,.workspace.layout-map-float .extras,.workspace.layout-map-hidden .extras,.workspace.layout-map-float .footnote,.workspace.layout-map-hidden .footnote{max-width:880px;margin-left:auto;margin-right:auto}
+.workspace.layout-map-hidden .map-shell:not(.map-expanded){display:none!important}
+/* Floating widget is small, draggable from its own handle, and keeps map gestures inside the map. */
+.map-shell.map-floating:not(.map-expanded){position:fixed!important;inset:auto!important;left:var(--map-float-x,calc(100vw - 270px))!important;top:var(--map-float-y,calc(100dvh - 225px))!important;right:auto!important;bottom:auto!important;width:260px!important;height:201px!important;min-height:0!important;max-height:none!important;flex:none!important;z-index:1450!important;border:1px solid var(--border-ui,#dce7d9);border-radius:16px;overflow:hidden;box-shadow:0 16px 45px #00191260;background:var(--bg-surface,#fff)!important;transition:box-shadow .2s ease}
+.map-shell.map-floating .map-float-bar{display:flex}
+.map-shell.map-floating .map-toolbar,.map-shell.map-floating .map-inline-actions,.map-shell.map-floating .legend,.map-shell.map-floating .pin-count,.map-shell.map-floating .leaflet-control-zoom{display:none!important}
+.map-shell.map-floating #map{position:absolute;inset:46px 0 0;top:46px;height:calc(100% - 46px)!important;width:100%}
+.map-shell.map-floating .fallback{top:46px;font-size:10px;padding:8px}
+.map-shell.map-floating .fallback strong{font-size:12px}
+.map-shell.map-floating .fallback .fallback-actions{display:none}
+.map-shell.map-floating .leaflet-control-attribution{font-size:7px;max-width:100%;background:#ffffffac}
+.map-shell.map-floating .leaflet-popup-content{min-width:135px;font-size:10px;margin:6px 8px}
+.map-shell.map-floating .leaflet-popup-content .pop-text{font-size:10px}
+.map-shell.map-floating.is-dragging{box-shadow:0 23px 55px #00191282;transition:none!important}
+.map-shell.map-expanded{z-index:2100!important;position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;margin:0!important;border-radius:0!important}
+.map-shell.map-expanded .map-float-bar,.map-shell.map-expanded .map-inline-actions{display:none!important}
+/* Avoid a second control row covering markers on 320px phones. */
+@media(max-width:820px){
+  .map-view-strip{padding:8px 9px;gap:4px}
+  .map-view-caption{display:none}
+  .map-mode-btn{min-height:39px;font-size:10.5px;padding:6px 3px}
+  .map-inline-actions{top:auto;bottom:11px;right:10px}
+  .map-inline-actions button{padding:7px 8px}
+  .map-shell.map-floating:not(.map-expanded){width:193px!important;height:159px!important}
+  .map-shell.map-floating .map-float-bar{padding:4px}
+  .map-shell.map-floating #map{top:43px;height:calc(100% - 43px)!important}
+  .map-shell.map-floating .fallback{top:43px}
+  .map-drag-handle{min-height:33px;font-size:10px;padding:3px}
+  .map-float-btn{min-width:30px;min-height:31px;font-size:14px}
+  .workspace.layout-map-float .panel,.workspace.layout-map-hidden .panel{height:100%!important;margin-top:0!important}
+  .map-shell.map-expanded #map{top:0!important;height:100%!important}
+  .map-shell.map-expanded .map-toolbar{display:flex!important;top:16px}
+}
+@media(max-width:360px){.map-mode-btn{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.map-view-strip,.map-shell.map-floating,.map-restore{transition:none!important}}
+</style>
 </head>
 <body>
 <section id="splash" hidden aria-label="Bienvenida a La Palma" role="status" aria-live="off">
@@ -294,18 +350,29 @@ html[data-theme="night"] .splash-orbit{opacity:.16;width:83%}
  </header>
  <div class="workspace">
   <main class="panel" id="panel" aria-label="Detalle del itinerario">
+   <nav id="mapViewStrip" class="map-view-strip" aria-label="Vista del mapa">
+    <span class="map-view-caption">Vista del mapa</span>
+    <button class="map-mode-btn" type="button" data-map-mode="auto" aria-pressed="true">◐ Auto</button>
+    <button class="map-mode-btn" type="button" data-map-mode="inline" aria-pressed="false">▤ Grande</button>
+    <button class="map-mode-btn" type="button" data-map-mode="float" aria-pressed="false">▣ Flotante</button>
+    <button class="map-mode-btn" type="button" data-map-mode="hidden" aria-pressed="false">✕ Ocultar</button>
+   </nav>
    <div id="dayDetail"></div>
    <section class="extras" id="extras"><div class="sup">Plan B</div><h3>Si queda tiempo</h3><p>Rutas opcionales incluidas en el PDF, no asignadas a un día concreto.</p><div id="extraItems"></div></section>
    <div class="footnote">Mapa basado en el itinerario del PDF. Las líneas de puntos muestran el <b>orden propuesto</b>, no el trazado real de la carretera. Google Maps calcula la ruta de conducción. Comprueba horarios, cierres y permisos antes de salir.<br><br>Mapa base © OpenStreetMap contributors. Los puntos visitados se guardan solo en este dispositivo.</div>
   </main>
   <section class="map-shell" data-map-layer="streets" aria-label="Mapa geográfico interactivo">
-    <div id="map"></div><div class="pin-count" id="pinCount" aria-live="polite">Cargando paradas…</div>
+    <div id="map"></div>
+    <div id="mapFloatBar" class="map-float-bar" aria-label="Controles del mapa flotante"><button id="mapDragHandle" class="map-drag-handle" type="button" aria-label="Arrastrar mapa flotante, o usar flechas del teclado para moverlo" title="Arrastra para mover el mapa; usa las flechas con teclado"><span class="grip" aria-hidden="true">⠿</span><span>Mover mapa</span></button><button id="mapFloatExpand" class="map-float-btn" type="button" aria-label="Ampliar mapa" title="Ampliar mapa">⤢</button><button id="mapFloatHide" class="map-float-btn" type="button" aria-label="Ocultar mapa" title="Ocultar mapa">×</button></div>
+    <div class="pin-count" id="pinCount" aria-live="polite">Cargando paradas…</div>
     <div class="fallback" id="fallback"><div><strong>No se pudo cargar el mapa</strong>Comprueba la conexión o el bloqueo de contenido. Puedes seguir el itinerario y abrir las ubicaciones en Google Maps.<div class="fallback-actions"><button id="retryMap" class="secondary" type="button">↻ Reintentar mapa</button></div></div></div>
     <div class="map-toolbar"><button class="map-btn" type="button" id="expandMap" aria-pressed="false" title="Ampliar mapa">⤢ Ampliar</button><button class="map-btn" type="button" id="locateButton" title="Ver mi ubicación">◎ Mi posición</button><button class="map-btn" type="button" id="layerButton" title="Alternar mapa de calles y vista satélite">◫ Satélite</button></div>
+    <div class="map-inline-actions"><button id="mapDockNow" class="map-btn" type="button" title="Ver mapa flotante">▣ Flotante</button><button id="mapHideNow" class="map-btn" type="button" title="Ocultar mapa">✕ Ocultar</button></div>
     <div class="legend"><b>Mapa de viaje</b><br>Puntos numerados: orden de visitas.<br>Línea discontinua: orden, no carretera.<br>Botones «Cómo llegar»: navegación real.</div>
   </section>
  </div>
 </div>
+<button id="mapRestore" class="map-restore" type="button" aria-label="Volver a mostrar mapa">▣ Mostrar mapa</button>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script>const TRIP_DATA={"places":{"airport":{"id":"airport","name":"Aeropuerto de La Palma","cat":"transporte","desc":"Llegada: vuelo 16:00. Devolución del coche el día 17 antes de las 16:00.","coords":[28.62669,-17.75524]},"olas":{"id":"olas","name":"Hotel Las Olas","cat":"hotel","desc":"Alojamiento del 10 al 14 de octubre. Los Cancajos.","coords":[28.64496,-17.75922],"link":"https://www.hotellasolas.es/en/"},"melia":{"id":"melia","name":"Apartments La Palma – Meliá","cat":"hotel","desc":"Alojamiento del 14 al 17 de octubre, media pensión. Puerto Naos.","coords":[28.58236,-17.90912],"link":"https://www.melia.com/es/hoteles/espana/la-palma/apartments-la-palma-3822"},"cancajos":{"id":"cancajos","name":"Los Cancajos","cat":"playa","desc":"Paseo tranquilo junto al mar, cerca del primer hotel.","coords":[28.64887,-17.75888]},"santacruz":{"id":"santacruz","name":"Santa Cruz de La Palma","cat":"ciudad","desc":"Paseo opcional por el casco histórico si da tiempo.","coords":[28.68334,-17.76483]},"balcones":{"id":"balcones","name":"Balcones de la Avenida Marítima","cat":"cultura","desc":"Uno de los rincones más reconocibles de la capital.","coords":[28.684883,-17.76276]},"plaza":{"id":"plaza","name":"Plaza de España","cat":"cultura","desc":"Plaza histórica de Santa Cruz de La Palma.","coords":[28.68334,-17.76483]},"salvador":{"id":"salvador","name":"Iglesia de El Salvador","cat":"cultura","desc":"Iglesia junto a la Plaza de España.","coords":[28.683508,-17.764957]},"museo":{"id":"museo","name":"Museo Naval, Barco de la Virgen","cat":"cultura","desc":"Museo con forma de barco, al norte del casco histórico.","coords":[28.68821,-17.76115]},"nogales":{"id":"nogales","name":"Playa de Nogales","cat":"playa","desc":"Arena negra, acantilados y escaleras. Precaución con el oleaje.","coords":[28.757082,-17.735851]},"tilos":{"id":"tilos","name":"Bosque de Los Tilos","cat":"senderismo","desc":"Ruta de senderismo del PDF. Comprobar cierres antes de salir.","coords":[28.7904,-17.8015],"link":"https://es.wikiloc.com/rutas-senderismo/cascada-de-los-tilos-mirador-del-espigon-atravesado-y-tilos-286284163","permit":"https://www.senderosdelapalma.es/senderos/lista-de-senderos/senderos-pequeno-recorrido/pr-lp-06-los-sauces-los-tilos/"},"charco":{"id":"charco","name":"Charco Azul","cat":"agua","desc":"Piscinas naturales de San Andrés y Sauces. Comprobar oleaje.","coords":[28.8079,-17.7616]},"sanandres":{"id":"sanandres","name":"San Andrés","cat":"pueblo","desc":"Paseo por el núcleo histórico costero.","coords":[28.79959,-17.76087]},"fajana":{"id":"fajana","name":"Piscinas de La Fajana","cat":"agua","desc":"Piscinas naturales en Barlovento.","coords":[28.84289,-17.7898]},"tosca":{"id":"tosca","name":"Mirador de La Tosca","cat":"mirador","desc":"Mirador panorámico del norte de la isla.","coords":[28.82739,-17.81455]},"piedras":{"id":"piedras","name":"Las Piedras B · encuentro Tajogaite","cat":"actividad","desc":"Punto de encuentro del tour según el enlace del PDF. 10:45–14:00.","coords":[28.6535446,-17.8522336],"link":"https://www.islabonitatours.com/ruta/senderismo/caminata-al-crater-de-cumbre-vieja-tajogaite/","maps":"https://www.google.com/maps/place/Las+Piedras+B/@28.6532719,-17.8512944,16.5z/data=!4m6!3m5!1s0xc6bedf4a81cb1f1:0xb6064bb7e411f6be!8m2!3d28.6535446!4d-17.8522336!16s%2Fg%2F11c5g7dc1v?entry=ttu"},"echentive":{"id":"echentive","name":"Playa de Echentive","cat":"playa","desc":"Parada para comer o pasear después del tour.","coords":[28.45886,-17.85106]},"sanantonio":{"id":"sanantonio","name":"Volcán San Antonio","cat":"volcan","desc":"Recorrido aproximado de 2 km y 1 hora, según el PDF.","coords":[28.48436,-17.84928]},"salinas":{"id":"salinas","name":"Salinas de Fuencaliente","cat":"mirador","desc":"Última parada del día, prevista para la puesta de sol.","coords":[28.4542,-17.84103]},"zamora":{"id":"zamora","name":"Playa y Bajas de la Zamora","cat":"playa","desc":"Parada opcional en Fuencaliente.","coords":[28.51586,-17.87512]},"indias":{"id":"indias","name":"Mirador Las Indias","cat":"mirador","desc":"Parada opcional en Fuencaliente.","coords":[28.49926,-17.85405]},"cumbrecita":{"id":"cumbrecita","name":"Mirador de La Cumbrecita","cat":"senderismo","desc":"Circuito de miradores, 4 km y 1 h 30 min. Reserva prevista: 09:00–11:00.","coords":[28.69789,-17.85655],"link":"https://es.wikiloc.com/rutas-senderismo/circular-mirador-cumbrecita-mirador-del-lomo-de-las-chozas-mirador-de-los-roques-81479081","permit":"https://www.gobiernodecanarias.org/parquesnacionales/caldera_de_taburiente/tramites/reserva/index-turismo.html"},"observatorio":{"id":"observatorio","name":"Observatorio del Roque de los Muchachos","cat":"mirador","desc":"Visita panorámica por la tarde. El acceso al interior de las instalaciones puede requerir reserva.","coords":[28.75739,-17.88681]},"roque":{"id":"roque","name":"Mirador del Roque de los Muchachos","cat":"mirador","desc":"Puesta de sol opcional. Comprobar horario y accesos por carretera.","coords":[28.75459,-17.88515]},"llanos":{"id":"llanos","name":"Los Llanos de Aridane","cat":"pueblo","desc":"Parada para comer antes de dirigirse al segundo alojamiento.","coords":[28.65922,-17.91519]},"puertonaos":{"id":"puertonaos","name":"Playa de Puerto Naos","cat":"playa","desc":"Paseo junto al mar o día de descanso.","coords":[28.585094,-17.910478]},"tazacorte":{"id":"tazacorte","name":"Tazacorte","cat":"pueblo","desc":"Visita al casco urbano.","coords":[28.6429,-17.9326]},"playatazacorte":{"id":"playatazacorte","name":"Playa de Tazacorte","cat":"playa","desc":"Paseo por el litoral y zona portuaria.","coords":[28.651214,-17.947154]},"time":{"id":"time","name":"Mirador El Time","cat":"mirador","desc":"Vistas sobre el valle de Aridane y la costa de Tazacorte.","coords":[28.66352,-17.94235]},"galga":{"id":"galga","name":"Cubo de la Galga · inicio de ruta","cat":"senderismo","desc":"Actividad opcional. Marcador situado en la zona de información, no dentro del bosque.","coords":[28.76689,-17.76997],"link":"https://es.wikiloc.com/rutas-senderismo/la-palma-cubo-de-la-galga-pr-lp-5-1-3210024"},"volcanmirador":{"id":"volcanmirador","name":"Mirador Oficial Volcán Tajogaite","cat":"mirador","desc":"El PDF no proporciona coordenadas precisas. Abrir la búsqueda y comprobar el acceso.","coords":null},"cabezavaca":{"id":"cabezavaca","name":"Mirador de Cabezavaca","cat":"mirador","desc":"Alternativa al mirador oficial del Tajogaite; ubicación por verificar.","coords":null},"caldera":{"id":"caldera","name":"Caldera de Taburiente · senderismo","cat":"senderismo","desc":"Actividad opcional de unas 6 horas. Acceso y ruta exactos por definir.","coords":null}},"days":[{"id":1,"date":"10 OCT","longdate":"Sábado 10 de octubre","title":"Llegada y Santa Cruz","subtitle":"Primera tarde en el este","theme":"Llegada","items":["airport","olas","cancajos","santacruz","balcones","plaza","salvador","museo"],"optional":["cancajos","santacruz","balcones","plaza","salvador","museo"],"route":["airport","olas","cancajos","santacruz"],"note":"Aterrizaje previsto a las 16:00. Recoger el coche TopCar y hacer el check-in. Todo lo demás depende del tiempo disponible."},{"id":2,"date":"11 OCT","longdate":"Domingo 11 de octubre","title":"Bosques y costa norte","subtitle":"Los Tilos · piscinas naturales","theme":"Naturaleza","items":["olas","nogales","tilos","sanandres","charco","fajana","tosca"],"optional":[],"route":["olas","nogales","tilos","sanandres","charco","fajana","tosca"],"note":"La ruta de Los Tilos tiene enlaces originales de Wikiloc. Importante: hay avisos oficiales de cierre en la red de senderos de la zona; revisar antes de salir."},{"id":3,"date":"12 OCT","longdate":"Lunes 12 de octubre","title":"Tajogaite y Fuencaliente","subtitle":"Volcanes, playa y atardecer","theme":"Volcanes","items":["olas","piedras","echentive","sanantonio","salinas","zamora","indias"],"optional":["zamora","indias"],"route":["olas","piedras","echentive","sanantonio","salinas"],"note":"Tour Tajogaite de 10:45 a 14:00 (30 € indicado en el PDF). Ir al punto de encuentro Las Piedras B, no directamente al cráter. Salinas al atardecer."},{"id":4,"date":"13 OCT","longdate":"Martes 13 de octubre","title":"La Cumbrecita y el Roque","subtitle":"Parque nacional · cielo de altura","theme":"Cumbres","items":["olas","cumbrecita","observatorio","roque"],"optional":["roque"],"route":["olas","cumbrecita","observatorio","roque"],"note":"Salir del hotel sobre las 08:10. La reserva del mirador está prevista de 09:00 a 11:00. Confirmar que está efectivamente emitida."},{"id":5,"date":"14 OCT","longdate":"Miércoles 14 de octubre","title":"Cambio a la costa oeste","subtitle":"Miradores · Los Llanos · Puerto Naos","theme":"Traslado","items":["olas","santacruz","volcanmirador","cabezavaca","llanos","melia","puertonaos"],"optional":["santacruz","volcanmirador","cabezavaca"],"route":["olas","llanos","melia","puertonaos"],"note":"Check-out en Las Olas. Santa Cruz, solo si no se visitó. El mirador oficial del Tajogaite o Cabezavaca son alternativas del PDF, sin coordenadas verificadas."},{"id":6,"date":"15 OCT","longdate":"Jueves 15 de octubre","title":"Descanso en Puerto Naos","subtitle":"Playa y día libre","theme":"Relax","items":["melia","puertonaos"],"optional":[],"route":["melia","puertonaos"],"note":"Desayuno y cena en el alojamiento. Día libre para descansar y disfrutar de Puerto Naos."},{"id":7,"date":"16 OCT","longdate":"Viernes 16 de octubre","title":"Tazacorte y El Time","subtitle":"Costa oeste y vistas panorámicas","theme":"Costa oeste","items":["melia","tazacorte","playatazacorte","time"],"optional":[],"route":["melia","tazacorte","playatazacorte","time"],"note":"Desayuno y cena en Meliá. Visitar Tazacorte, la playa y subir al mirador El Time."},{"id":8,"date":"17 OCT","longdate":"Sábado 17 de octubre","title":"Regreso a Barcelona","subtitle":"Aeropuerto y devolución del coche","theme":"Regreso","items":["melia","airport"],"optional":[],"route":["melia","airport"],"note":"Desayuno, salida de Puerto Naos y llegada al aeropuerto prevista a las 14:50. Devolver TopCar antes de las 16:00. Vuelo 16:50."}],"extras":["galga","caldera"]};</script>
 <script>
@@ -376,17 +443,18 @@ window.leafletReady = new Promise((resolve) => {
  function buildPinSet(view){const result=[];for(const group of groupedStops()){const {id,day}=group[0],p=lookup(id),d=days[day-1];const num=d.items.indexOf(id)+1;const icon=createIcon(p,day,num,d.optional.includes(id),group.length);const marker=L.marker(p.coords,{icon,keyboard:true,riseOnHover:true});marker.tripIds=group.map(g=>g.id);const rows=group.map(g=>{const entry=lookup(g.id);return `<div style="margin:8px 0"><strong>${esc(entry.name)}</strong><br><a href="${esc(mapsLink(entry))}" target="_blank" rel="noopener noreferrer">↗ Cómo llegar</a></div>`}).join('');marker.bindPopup(`<div class="pop-title">${group.length>1?group.length+' paradas próximas':esc(p.name)}</div><div class="pop-text">Día ${day}</div>${rows}`,{maxWidth:260});result.push(marker)}pinSets.set(view,result);return result}
  function updateMap(){if(!map)return;if(!visibleLayer)visibleLayer=L.layerGroup().addTo(map);visibleLayer.clearLayers();markers=pinSets.get(selected)||buildPinSet(selected);markers.forEach(m=>visibleLayer.addLayer(m));if(routeLine){map.removeLayer(routeLine);routeLine=null}if(selected>0){if(!routeSets.has(selected)){const d=days[selected-1],pts=d.route.map(id=>places[id]?.coords).filter(Boolean);routeSets.set(selected,pts.length>1?L.polyline(pts,{color:colors[selected-1],weight:4,dashArray:'6 9',opacity:.9,interactive:false}):null)}routeLine=routeSets.get(selected);if(routeLine)routeLine.addTo(map)}const n=activePoints().length;$('pinCount').textContent=`${n} paradas · ${markers.length} puntos en mapa`;clearTimeout(fitTimer);fitTimer=setTimeout(()=>{map.invalidateSize({pan:false});fitCurrent()},45)}
  function fitCurrent(){if(!map){toast('Mapa no disponible; utiliza «Cómo llegar».');return}const pts=markers.map(m=>m.getLatLng());if(!pts.length){map.setView([28.674,-17.827],10,{animate:false});return}if(pts.length===1){map.setView(pts[0],13,{animate:false});return}map.fitBounds(L.latLngBounds(pts),{animate:false,maxZoom:13,paddingTopLeft:[24,30],paddingBottomRight:[24,55]})}
- function focusPlace(id){if(!map){toast('Mapa no disponible; utiliza «Cómo llegar».');return}const p=places[id];if(!p?.coords){toast('Ubicación por verificar: usa la búsqueda en Maps');return}const marker=markers.find(m=>m.tripIds.includes(id));if(!marker){const target=days.find(d=>d.items.includes(id));if(!target){toast('Punto sin día asignado');return}setSelected(target.id);setTimeout(()=>focusPlace(id),90);return}map.setView(p.coords,Math.max(map.getZoom(),13),{animate:false});requestAnimationFrame(()=>marker.openPopup())}
- function render(){tabs();$('panel').scrollTop=0;renderPanel();updateMap()}
+ function focusPlace(id){if(window.LaPalmaMapLayout?.isHidden())window.LaPalmaMapLayout.setMode('float');if(!map){toast('Mapa no disponible; utiliza «Cómo llegar».');return}const p=places[id];if(!p?.coords){toast('Ubicación por verificar: usa la búsqueda en Maps');return}const marker=markers.find(m=>m.tripIds.includes(id));if(!marker){const target=days.find(d=>d.items.includes(id));if(!target){toast('Punto sin día asignado');return}setSelected(target.id);setTimeout(()=>focusPlace(id),90);return}map.setView(p.coords,Math.max(map.getZoom(),13),{animate:false});requestAnimationFrame(()=>marker.openPopup())}
+ function render(){tabs();$('panel').scrollTop=0;renderPanel();updateMap();window.LaPalmaMapLayout?.onDayChanged()}
  function initMap(){if(!window.L){$('fallback').style.display='flex';$('pinCount').textContent='Mapa no disponible';document.querySelector('.map-shell').classList.add('map-unavailable');$('locateButton').disabled=true;$('layerButton').disabled=true;$('expandMap').disabled=true;$('retryMap').onclick=()=>location.reload();return}
    map=L.map('map',{zoomControl:false,scrollWheelZoom:false,zoomAnimation:false,fadeAnimation:false,markerZoomAnimation:false,inertia:false,preferCanvas:true,tap:false}).setView([28.68,-17.826],10,{animate:false});L.control.zoom({position:'bottomleft'}).addTo(map);
    const osm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,keepBuffer:1,updateWhenIdle:true,attribution:'© OpenStreetMap contributors'});
    const sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:18,keepBuffer:1,updateWhenIdle:true,attribution:'Tiles © Esri, Maxar, Earthstar Geographics'});
    baseLayers={osm,sat};osm.addTo(map);document.querySelector('.map-shell').dataset.mapLayer='streets';
    $('layerButton').onclick=()=>{map.removeLayer(showSatellite?sat:osm);showSatellite=!showSatellite;document.querySelector('.map-shell').dataset.mapLayer=showSatellite?'satellite':'streets';(showSatellite?sat:osm).addTo(map);$('layerButton').textContent=showSatellite?'▤ Calles':'◫ Satélite'};
-   $('expandMap').onclick=()=>{const shell=document.querySelector('.map-shell');const expanded=shell.classList.toggle('map-expanded');$('expandMap').setAttribute('aria-pressed',String(expanded));$('expandMap').textContent=expanded?'↙ Reducir':'⤢ Ampliar';document.body.style.overflow=expanded?'hidden':'';setTimeout(()=>{map.invalidateSize({pan:false});fitCurrent()},80)};
+   $('expandMap').onclick=()=>{if(window.LaPalmaMapLayout){window.LaPalmaMapLayout.toggleExpand();return}const shell=document.querySelector('.map-shell');const expanded=shell.classList.toggle('map-expanded');$('expandMap').setAttribute('aria-pressed',String(expanded));$('expandMap').textContent=expanded?'↙ Reducir':'⤢ Ampliar';document.body.style.overflow=expanded?'hidden':'';setTimeout(()=>{map.invalidateSize({pan:false});fitCurrent()},80)};
    $('locateButton').onclick=()=>{if(!navigator.geolocation){toast('Tu navegador no permite geolocalización');return}toast('Buscando tu ubicación…');navigator.geolocation.getCurrentPosition(pos=>{const ll=[pos.coords.latitude,pos.coords.longitude];if(userPin)map.removeLayer(userPin);userPin=L.circleMarker(ll,{radius:9,weight:3,color:'#ffffff',fillColor:'#1e90c8',fillOpacity:1}).addTo(map).bindPopup('Estás aquí');map.setView(ll,14,{animate:false});userPin.openPopup()},()=>toast('No se pudo obtener la ubicación. Revisa permisos de localización.'),{enableHighAccuracy:false,timeout:12000,maximumAge:30000})};
    document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(()=>map.invalidateSize({pan:false}),100)});
+   window.addEventListener('palma:maplayout',()=>{if(!map)return;requestAnimationFrame(()=>{map.invalidateSize({pan:false});fitCurrent()})});
    setTimeout(()=>map.invalidateSize({pan:false}),200);
  }
  $('allButton').onclick=()=>setSelected(0);
@@ -450,6 +518,133 @@ window.leafletReady = new Promise((resolve) => {
  window.LaPalmaTheme={setMode,resolve,getMode,canaryMinutes,showSplash,finishSplash};
 })();
 
+</script>
+
+<script id="palma-map-layout-behaviour">
+/* Map layouts: no Leaflet re-initialization; drag only by handle; safe mobile viewport. */
+(()=>{'use strict';
+ const KEY='la-palma-map-view-v1', POSITION='la-palma-map-position-v1';
+ const $=id=>document.getElementById(id);
+ const mq=window.matchMedia('(max-width: 820px)');
+ const shell=document.querySelector('.map-shell');
+ const workspace=document.querySelector('.workspace');
+ const panel=$('panel');
+ if(!shell||!workspace||!panel)return;
+ let preference='auto';
+ try{const raw=localStorage.getItem(KEY);if(['auto','inline','float','hidden'].includes(raw))preference=raw}catch{}
+ let mode='',expanded=false,lastShown='float';
+ let drag=null,position=null,scrollRequested=false,resizing=null;
+ try{const raw=JSON.parse(localStorage.getItem(POSITION)||'null');if(raw&&Number.isFinite(raw.x)&&Number.isFinite(raw.y))position=raw}catch{}
+ function mobile(){return mq.matches}
+ function dims(){return {w:mobile()?193:260,h:mobile()?159:201}}
+ function limits(){
+  const {w,h}=dims(),vw=window.innerWidth,vh=window.innerHeight;
+  const header=document.querySelector('header');
+  const minY=Math.min(vh-h-10,Math.max(6,(header?.getBoundingClientRect().bottom||0)+7));
+  return {minX:8,maxX:Math.max(8,vw-w-8),minY:Math.max(6,minY),maxY:Math.max(6,vh-h-8)};
+ }
+ function clamp(v,min,max){return Math.min(max,Math.max(min,v))}
+ function pointDefault(){const l=limits();return {x:l.maxX,y:l.maxY}}
+ function updatePosition(){
+  const l=limits(),p=position||pointDefault();
+  position={x:clamp(p.x,l.minX,l.maxX),y:clamp(p.y,l.minY,l.maxY)};
+  shell.style.setProperty('--map-float-x',position.x+'px');shell.style.setProperty('--map-float-y',position.y+'px');
+ }
+ function savePosition(){try{localStorage.setItem(POSITION,JSON.stringify(position))}catch{}}
+ function inferredMode(){if(preference!=='auto')return preference;if(!mobile())return 'inline';/* Hysteresis prevents layout jitter while scrolling near the boundary. */return (mode==='float'?panel.scrollTop>52:panel.scrollTop>135)?'float':'inline'}
+ function refreshControls(){
+  document.querySelectorAll('[data-map-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mapMode===preference)));
+  $('mapRestore').classList.toggle('is-visible',mode==='hidden'&&!expanded);
+  $('mapViewStrip').setAttribute('data-current-map-view',mode);
+ }
+ function invalidateSoon(){
+  clearTimeout(resizing);
+  requestAnimationFrame(()=>window.dispatchEvent(new Event('palma:maplayout')));
+  resizing=setTimeout(()=>window.dispatchEvent(new Event('palma:maplayout')),190);
+ }
+ function apply(){
+  const next=inferredMode();
+  if(mode===next)return;
+  mode=next;
+  workspace.classList.toggle('layout-map-float',mode==='float');
+  workspace.classList.toggle('layout-map-hidden',mode==='hidden');
+  shell.classList.toggle('map-floating',mode==='float'&&!expanded);
+  shell.classList.toggle('map-hidden',mode==='hidden'&&!expanded);
+  if(mode==='float'&&!expanded)updatePosition();
+  if(mode!=='hidden')lastShown=mode;
+  refreshControls();
+  if(mode!=='hidden')invalidateSoon();
+ }
+ function setMode(next){if(!['auto','inline','float','hidden'].includes(next))return;
+  if(expanded)closeExpanded(false);
+  preference=next;
+  try{localStorage.setItem(KEY,preference)}catch{}
+  apply();
+ }
+ function closeExpanded(notify=true){if(!expanded)return;
+  expanded=false;
+  shell.classList.remove('map-expanded');
+  $('expandMap').setAttribute('aria-pressed','false');$('expandMap').textContent='⤢ Ampliar';
+  document.body.style.overflow='';
+  mode='';apply();if(notify)invalidateSoon();
+ }
+ function toggleExpand(){if(!expanded){
+   expanded=true;
+   shell.classList.remove('map-floating','map-hidden');shell.classList.add('map-expanded');
+   $('expandMap').setAttribute('aria-pressed','true');$('expandMap').textContent='↙ Reducir';
+   $('mapRestore').classList.remove('is-visible');
+   document.body.style.overflow='hidden';
+   invalidateSoon();
+  }else closeExpanded();
+ }
+ function handleScroll(){if(preference!=='auto'||!mobile()||expanded)return;
+  if(scrollRequested)return;
+  scrollRequested=true;
+  requestAnimationFrame(()=>{scrollRequested=false;apply()});
+ }
+ panel.addEventListener('scroll',handleScroll,{passive:true});
+ document.querySelectorAll('[data-map-mode]').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mapMode)));
+ $('mapDockNow').addEventListener('click',()=>setMode('float'));
+ $('mapHideNow').addEventListener('click',()=>setMode('hidden'));
+ $('mapFloatHide').addEventListener('click',()=>setMode('hidden'));
+ $('mapFloatExpand').addEventListener('click',()=>toggleExpand());
+ $('mapRestore').addEventListener('click',()=>setMode(mobile()?'float':(lastShown==='hidden'?'inline':lastShown)));
+ const handle=$('mapDragHandle');
+ handle.addEventListener('pointerdown',e=>{
+  if(mode!=='float'||expanded||e.button!==0)return;
+  updatePosition();
+  drag={id:e.pointerId,x:e.clientX,y:e.clientY,left:position.x,top:position.y,moved:false};
+  handle.setPointerCapture(e.pointerId);
+  shell.classList.add('is-dragging');
+  e.preventDefault();
+ });
+ handle.addEventListener('pointermove',e=>{
+  if(!drag||drag.id!==e.pointerId)return;
+  const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+  if(Math.abs(dx)+Math.abs(dy)>3)drag.moved=true;
+  const l=limits();position={x:clamp(drag.left+dx,l.minX,l.maxX),y:clamp(drag.top+dy,l.minY,l.maxY)};
+  shell.style.setProperty('--map-float-x',position.x+'px');shell.style.setProperty('--map-float-y',position.y+'px');
+ });
+ function endDrag(e){if(!drag||e.pointerId!==drag.id)return;
+  if(handle.hasPointerCapture(e.pointerId))handle.releasePointerCapture(e.pointerId);
+  shell.classList.remove('is-dragging');if(drag.moved)savePosition();drag=null;
+ }
+ handle.addEventListener('pointerup',endDrag);handle.addEventListener('pointercancel',endDrag);
+ handle.addEventListener('keydown',e=>{if(mode!=='float'||!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))return;
+  e.preventDefault();updatePosition();const d=e.shiftKey?32:16,l=limits();
+  if(e.key==='ArrowUp')position.y-=d;if(e.key==='ArrowDown')position.y+=d;
+  if(e.key==='ArrowLeft')position.x-=d;if(e.key==='ArrowRight')position.x+=d;
+  position={x:clamp(position.x,l.minX,l.maxX),y:clamp(position.y,l.minY,l.maxY)};updatePosition();savePosition();
+ });
+ function onResize(){if(mode==='float')updatePosition();if(preference==='auto')apply();if(mode!=='hidden')invalidateSoon()}
+ window.addEventListener('resize',onResize,{passive:true});
+ if(mq.addEventListener)mq.addEventListener('change',onResize);else mq.addListener(onResize);
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&expanded)closeExpanded()});
+ window.addEventListener('pagehide',()=>{if(drag)savePosition()});
+ function onDayChanged(){if(preference==='auto')requestAnimationFrame(apply)}
+ apply();
+ window.LaPalmaMapLayout={setMode,toggleExpand,isHidden:()=>mode==='hidden',getMode:()=>mode,getPreference:()=>preference,onDayChanged};
+})();
 </script>
 </body>
 </html>
