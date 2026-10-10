@@ -21,7 +21,16 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  if (event.request.mode !== 'navigate') return;
+  if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
+  if (url.origin !== self.location.origin) return;
+  if (event.request.mode !== 'navigate') {
+    const file = url.pathname.split('/').pop();
+    if (['profiles.js', 'profiles.css', 'icon.svg', 'icon-192.png', 'manifest.webmanifest'].includes(file)) {
+      event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request)));
+    }
+    return;
+  }
 
   event.respondWith(
     fetch(event.request).then((response) => {
