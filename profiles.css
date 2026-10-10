@@ -1,0 +1,17 @@
+/* Local traveler profile selector */
+.profile-box{margin:13px 16px 0;padding:12px 14px;background:var(--bg-surface,#fff);border:1px solid var(--border-ui,#dce5da);border-radius:15px;color:var(--text-main,#174333)}
+.profile-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.profile-identity{display:flex;flex-direction:column;gap:2px;min-width:0}
+.profile-kicker{font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--text-soft,#587c67)}
+.profile-identity strong{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-identity small,.profile-explain{font-size:11px;line-height:1.5;color:var(--text-soft,#658070)}
+.profile-box .profile-button{padding:9px 11px;border-radius:10px;white-space:nowrap;font-size:11px;flex-shrink:0}
+.profile-panel{border-top:1px solid var(--border-ui,#dce5da);padding-top:12px;margin-top:11px}
+.profile-panel[hidden]{display:none!important}
+.profile-field{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1}
+.profile-field label{font-size:11px;font-weight:800;color:var(--text-main,#174333)}
+.profile-controls{display:flex;align-items:flex-end;gap:7px;margin:9px 0 12px;flex-wrap:wrap}
+.profile-field input,.profile-field select{width:100%;min-width:0;border:1px solid var(--border-ui,#dce5da);background:var(--bg-surface,#fff);color:var(--text-main,#174333);border-radius:9px;padding:9px 10px;min-height:39px;font:inherit;font-size:13px}
+.profile-controls .profile-button{min-height:39px}
+.profile-explain{margin:0}
+@media(max-width:440px){.profile-box{margin:10px 11px 0;padding:11px}.profile-top{align-items:flex-start}.profile-controls{flex-wrap:nowrap}.profile-field{flex-basis:60%}.profile-controls .profile-button{padding:9px 8px}}
