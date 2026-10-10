@@ -343,6 +343,7 @@ html[data-theme="night"] .pace-action.primary{color:#112c25}
 @media(max-width:360px){.pace-coach{margin:9px 10px 4px;padding:10px}.pace-portrait{width:50px;height:50px;flex-basis:50px}.pace-copy h3{font-size:17px}.pace-stats{grid-template-columns:1fr}.pace-action{font-size:10px;padding:7px 6px}}
 @media(prefers-reduced-motion:reduce){.pace-coach,.pace-action,.logo{transition:none!important;animation:none!important}}
 </style>
+<link rel="stylesheet" href="./profiles.css">
 </head>
 <body>
 <section id="splash" hidden aria-label="Bienvenida a La Palma" role="status" aria-live="off">
@@ -404,6 +405,27 @@ html[data-theme="night"] .pace-action.primary{color:#112c25}
     <button class="map-mode-btn" type="button" data-map-mode="float" aria-pressed="false">▣ Flotante</button>
     <button class="map-mode-btn" type="button" data-map-mode="hidden" aria-pressed="false">✕ Ocultar</button>
    </nav>
+   <section class="profile-box" aria-label="Progreso personal del viajero">
+     <div class="profile-top">
+       <div class="profile-identity">
+         <span class="profile-kicker">MI PROGRESO · GUARDADO</span>
+         <strong id="profileName">Mi viaje</strong>
+         <small id="profileInfo">Cargando progreso…</small>
+       </div>
+       <button type="button" class="secondary profile-button" id="profileOpen" aria-controls="profilePanel" aria-expanded="false">Cambiar perfil</button>
+     </div>
+     <div class="profile-panel" id="profilePanel" hidden>
+       <div class="profile-controls">
+         <div class="profile-field"><label for="profileSelect">Elegir viajero</label><select id="profileSelect"></select></div>
+         <button type="button" class="secondary profile-button" id="profileUse">Usar perfil</button>
+       </div>
+       <div class="profile-controls">
+         <div class="profile-field"><label for="profileNewName">Nuevo viajero</label><input id="profileNewName" type="text" maxlength="32" placeholder="Nombre del viajero" autocomplete="off"></div>
+         <button type="button" class="secondary profile-button" id="profileCreate">Crear perfil</button>
+       </div>
+       <p class="profile-explain">Cada perfil conserva sus propias visitas completadas. Se abre automáticamente el último utilizado. Los datos se guardan en este navegador, no se sincronizan entre dispositivos ni sobreviven si borras los datos del sitio.</p>
+     </div>
+   </section>
 
    <section id="paceCoach" class="pace-coach is-idle" aria-label="Asistente de horario y localización">
      <div class="pace-upper">
@@ -422,7 +444,9 @@ html[data-theme="night"] .pace-action.primary{color:#112c25}
      </div>
      <div id="paceOptions" class="pace-options" hidden>
        <label class="pace-label" for="paceDelay">Retraso estimado del vuelo de ida, en minutos</label>
-       <div class="pace-delay-row"><input id="paceDelay" type="number" inputmode="numeric" min="0" max="360" step="15" value="90"><span>Previsto: 16:00 · La Palma</span></div>
+       <div class="pace-delay-row"><input id="paceDelay" type="number" inputmode="numeric" min="0" max="360" step="1" value="90" aria-label="Minutos de retraso"><span>Minutos de retraso. Llegada original: 16:00</span></div>
+       <label class="pace-label" for="paceArrival">O indica la hora prevista de llegada (hora de Canarias)</label>
+       <div class="pace-delay-row"><input id="paceArrival" type="time" min="16:00" max="22:00" step="60" value="17:30" aria-label="Nueva hora prevista de llegada"><span>Actualiza el retraso automáticamente.</span></div>
        <label class="pace-follow"><input type="checkbox" id="paceTracking"> Actualizar mi posición mientras tenga la web abierta</label>
        <p class="pace-disclosure">La ubicación solo se solicita con tu permiso. Si compruebas la ruta por carretera, las coordenadas del trayecto se envían a un servicio externo (OSRM) para calcular tiempos aproximados, sin tráfico en directo. No guardamos tu GPS ni consultamos el estado real del vuelo.</p>
      </div>
@@ -430,7 +454,7 @@ html[data-theme="night"] .pace-action.primary{color:#112c25}
    </section>
    <div id="dayDetail"></div>
    <section class="extras" id="extras"><div class="sup">Plan B</div><h3>Si queda tiempo</h3><p>Rutas opcionales incluidas en el PDF, no asignadas a un día concreto.</p><div id="extraItems"></div></section>
-   <div class="footnote">Mapa basado en el itinerario del PDF. Las líneas de puntos muestran el <b>orden propuesto</b>, no el trazado real de la carretera. Google Maps calcula la ruta de conducción. Comprueba horarios, cierres y permisos antes de salir.<br><br>Mapa base © OpenStreetMap contributors. Los puntos visitados se guardan solo en este dispositivo.</div>
+   <div class="footnote">Cada viajero tiene sus marcas guardadas en el navegador. No hay cuentas ni sincronización entre dispositivos.<br><br>Mapa basado en el itinerario del PDF. Las líneas de puntos muestran el <b>orden propuesto</b>, no el trazado real de la carretera. Google Maps calcula la ruta de conducción. Comprueba horarios, cierres y permisos antes de salir.<br><br>Mapa base © OpenStreetMap contributors. Los puntos visitados se guardan en el perfil activo de este navegador.</div>
   </main>
   <section class="map-shell" data-map-layer="streets" aria-label="Mapa geográfico interactivo">
     <div id="map"></div>
@@ -477,6 +501,7 @@ window.leafletReady = new Promise((resolve) => {
   attempt(0);
 });
 </script>
+<script src="./profiles.js"></script>
 <script>
 (() => {
  'use strict';
@@ -489,7 +514,7 @@ window.leafletReady = new Promise((resolve) => {
  if(!Number.isInteger(selected)||selected<0||selected>days.length)selected=firstDay;
  let showSatellite=false,map,markers=[],routeLine,userPin,baseLayers,visited={};
  const pinSets=new Map(),routeSets=new Map();let visibleLayer=null,fitTimer=0;
- try{visited=JSON.parse(localStorage.getItem('lapalma-visited-v1')||'{}')}catch{}
+ visited=window.LaPalmaProfiles?.getVisited()||{};
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const coord=p=>p?.coords?.join(',')||null;
  const googleSearch=p=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.name+', La Palma, Canarias, España');
@@ -506,7 +531,7 @@ window.leafletReady = new Promise((resolve) => {
  function daySection(d){const finished=d.items.filter(id=>visited[id]).length;const warn=d.id===2||d.id===4;const routes=routesForDay(d);const routeButtons=routes.map((url,i)=>`<a class="primary" href="${esc(url)}" target="_blank" rel="noopener">↗ Google Maps${routes.length>1?' · '+(i+1)+'/'+routes.length:''}</a>`).join('');return `<section class="summary"><div class="sup">Día ${d.id} · ${esc(d.longdate)}</div><h2>${esc(d.title)}</h2><p class="subtitle">${esc(d.subtitle)}</p><div class="notice ${warn?'alert':''}">${esc(d.note)}</div><div class="summary-actions">${routeButtons}<button class="secondary" type="button" id="fitRoute">⌖ Ver recorrido</button></div>${routes.length>1?'<p class="subtitle" style="margin-top:10px">Ruta dividida en tramos para conservar todas las paradas en Google Maps móvil.</p>':''}</section><div class="meta-row"><span class="sectionhead">Paradas del día</span><span class="progress">${finished} / ${d.items.length} visitadas</span></div><div class="stops">${d.items.map((id,i)=>stopHtml(id,d,i)).join('')}</div>`}
  function allSection(){const allids=[...new Set(days.flatMap(d=>d.items))];const done=allids.filter(id=>visited[id]).length;return `<section class="summary"><div class="sup">La isla bonita · 8 días</div><h2>El viaje completo</h2><p class="subtitle">10–17 de octubre · Paradas de todos los días</p><div class="notice">Elige un día en la barra superior para seguir la ruta o mira todo el recorrido a la vez. Las ubicaciones sin coordenadas verificadas solo aparecen en la lista.</div><div class="summary-actions"><button type="button" class="primary" id="fitRoute">⌖ Ver toda la isla</button></div></section><div class="meta-row"><span class="sectionhead">Todos los lugares</span><span class="progress">${done} / ${allids.length} visitados</span></div><div class="stops">${allids.map((id,i)=>stopHtml(id,days.find(d=>d.items.includes(id)),i)).join('')}</div>`}
  function extrasHtml(){return extras.map(id=>{const p=lookup(id);return `<div class="extra-item"><div><b>${esc(p.name)}</b><br><small>${esc(p.desc)}</small></div><div><a class="stop-link" href="${esc(p.link||googleSearch(p))}" target="_blank" rel="noopener">↗ ${p.link?'Wikiloc':'Buscar'}</a></div></div>`}).join('')}
- function bindStops(){document.querySelectorAll('[data-visited]').forEach(b=>b.onclick=()=>{const key=b.dataset.visited;visited[key]=!visited[key];try{localStorage.setItem('lapalma-visited-v1',JSON.stringify(visited))}catch{}renderPanel()});document.querySelectorAll('[data-pin]').forEach(b=>b.onclick=()=>focusPlace(b.dataset.pin));const btn=$('fitRoute');if(btn)btn.onclick=()=>fitCurrent()}
+ function bindStops(){document.querySelectorAll('[data-visited]').forEach(b=>b.onclick=()=>{const key=b.dataset.visited;window.LaPalmaProfiles?.toggleVisited(key);visited=window.LaPalmaProfiles?.getVisited()||{};renderPanel()});document.querySelectorAll('[data-pin]').forEach(b=>b.onclick=()=>focusPlace(b.dataset.pin));const btn=$('fitRoute');if(btn)btn.onclick=()=>fitCurrent()}
  function renderPanel(){const oldScroll=$('panel').scrollTop;$('dayDetail').innerHTML=selected===0?allSection():daySection(days[selected-1]);if(!$('extraItems').childElementCount)$('extraItems').innerHTML=extrasHtml();bindStops();$('panel').scrollTop=oldScroll}
  function activePoints(){if(selected===0){const ids=[...new Set(days.flatMap(d=>d.items))];return ids.map(id=>({id,day:days.find(d=>d.items.includes(id)).id})).filter(a=>places[a.id].coords)}const d=days[selected-1];return d.items.map(id=>({id,day:d.id})).filter(a=>places[a.id].coords)}
  function createIcon(p,day,number,isOptional,count){const c=colors[day-1]||'#267154';const label=count>1?String(count):p.cat==='hotel'?'⌂':p.cat==='transporte'?'✈':String(number);const css=count>1?'cluster':p.cat==='hotel'?'hotel':isOptional?'aux':'';return L.divIcon({className:'',html:`<span class="custompin ${css}" style="--p:${c}" aria-label="${count>1?count+' paradas':esc(p.name)}">${label}</span>`,iconSize:[38,38],iconAnchor:[19,19],popupAnchor:[0,-18]})}
@@ -529,6 +554,7 @@ window.leafletReady = new Promise((resolve) => {
    setTimeout(()=>map.invalidateSize({pan:false}),200);
  }
  $('allButton').onclick=()=>setSelected(0);
+ window.addEventListener('lapalma:profile-changed',()=>{visited=window.LaPalmaProfiles?.getVisited()||{};renderPanel()});
  $('shareButton').onclick=async()=>{const url=location.href;if(location.protocol==='file:'){toast('Comparte el archivo HTML o publica la web para tener un enlace');return}if(navigator.share){try{await navigator.share({title:'La Palma · Itinerario 10–17 octubre',text:'Mapa de nuestro viaje a La Palma',url})}catch{}}else{try{await navigator.clipboard.writeText(url);toast('Enlace copiado')}catch{toast('Copia la URL del navegador para compartir')}}};
  render();
  window.leafletReady.then(() => {initMap();updateMap()}).catch(() => {initMap()});
@@ -725,8 +751,9 @@ const $=id=>document.getElementById(id), data=window.TRIP_DATA || (typeof TRIP_D
 if(!data||!$('paceCoach'))return;
 const {places,days}=data;
 let delay=90,position=null,positionAt=0,checking=false,watchId=null,route=null,routeKey='',routeAt=0,routeAbort=null,requestSerial=0;
-try{let stored=localStorage.getItem(DELAY_KEY);if(stored!==null&&Number.isFinite(+stored))delay=Math.max(0,Math.min(360,Math.round(+stored/15)*15))}catch{}
+try{let stored=localStorage.getItem(DELAY_KEY);if(stored!==null&&stored.trim()!==''&&Number.isFinite(+stored))delay=Math.max(0,Math.min(360,Math.round(+stored)))}catch{}
 $('paceDelay').value=String(delay);
+$('paceArrival').value=`${String(Math.floor((16*60+delay)/60)).padStart(2,'0')}:${String((16*60+delay)%60).padStart(2,'0')}`;
 const dateParts=new Intl.DateTimeFormat('en-GB',{timeZone:ZONE,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
 const clockFmt=new Intl.DateTimeFormat('es-ES',{timeZone:ZONE,hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
 const pad=n=>String(n).padStart(2,'0');
@@ -739,7 +766,7 @@ function selectedDay(){const raw=new URLSearchParams(location.search).get('dia')
  const id=raw===null?(() => {const today=islandNow().day;const d=days.find(d=>targetDate(d.id)===today);return d?.id||1})():Number(raw);
  return days.find(d=>d.id===id)||null;
 }
-function visited(){try{const obj=JSON.parse(localStorage.getItem('lapalma-visited-v1')||'{}');return obj&&typeof obj==='object'?obj:{}}catch{return {}}}
+function visited(){return window.LaPalmaProfiles?.getVisited()||{}}
 function left(min){if(min<0)return `Hace ${Math.abs(Math.round(min))} min`;return `${Math.round(min)} min`}
 function hm(min){const cl=Math.max(0,Math.round(min));return `${pad(Math.floor(cl/60)%24)}:${pad(cl%60)}`}
 function placeName(id){return places[id]?.name||id}
@@ -839,8 +866,17 @@ function update(){
   'Este día no tiene plazos rígidos documentados. La app no inventa obligaciones ni horarios.');
  }
 }
-function setPaceDelay(v){const n=Math.round(Number(v)/15)*15;if(!Number.isFinite(n))return;
- delay=Math.min(360,Math.max(0,n));$('paceDelay').value=String(delay);try{localStorage.setItem(DELAY_KEY,String(delay))}catch{}update()}
+function setPaceDelay(v){if(String(v).trim()==='')return;const n=Math.round(Number(v));if(!Number.isFinite(n))return;
+ delay=Math.min(360,Math.max(0,n));$('paceDelay').value=String(delay);
+ $('paceArrival').value=hm(16*60+delay);
+ try{localStorage.setItem(DELAY_KEY,String(delay))}catch{}update()}
+function setPaceArrival(value){
+ const match=/^([01][0-9]|2[0-3]):([0-5][0-9])$/.exec(String(value));
+ if(!match){$('paceArrival').value=hm(16*60+delay);return}
+ const absolute=Number(match[1])*60+Number(match[2]);
+ if(absolute<16*60||absolute>22*60){$('paceArrival').value=hm(16*60+delay);return}
+ setPaceDelay(absolute-16*60);
+}
 function geolocate(){if(!navigator.geolocation||!window.isSecureContext){status('idle','Ubicación no disponible','Necesitas una conexión HTTPS y permisos de localización para calcular el desplazamiento.','Sin GPS','Comprueba ajustes del navegador');return}
  $('paceLocation').disabled=true;$('paceLocation').textContent='Localizando…';
  navigator.geolocation.getCurrentPosition(pos=>{acceptPosition(pos);$('paceLocation').disabled=false;$('paceLocation').textContent='◎ Actualizar ubicación';},err=>{
@@ -893,6 +929,9 @@ function initWatch(enabled){if(!enabled){clearWatch();return}
 function bind(){
  $('paceLocation').addEventListener('click',geolocate);
  $('paceDelay').addEventListener('change',e=>setPaceDelay(e.target.value));
+ $('paceArrival').addEventListener('change',e=>setPaceArrival(e.target.value));
+ window.addEventListener('storage',e=>{if(e.key===DELAY_KEY){const value=localStorage.getItem(DELAY_KEY);if(value!==null)setPaceDelay(value)}});
+
  $('paceSettings').addEventListener('click',()=>{
   const el=$('paceOptions'),expanded=el.hidden;el.hidden=!expanded;$('paceSettings').setAttribute('aria-expanded',String(expanded));
  });
@@ -909,7 +948,7 @@ function bind(){
  update();
 }
 bind();
-window.LaPalmaPace={islandNow,update,setPaceDelay,getDelay:()=>delay,getPosition:()=>position,checkRoute:lookupRoad};
+window.LaPalmaPace={islandNow,update,setPaceDelay,setPaceArrival,getDelay:()=>delay,getPosition:()=>position,checkRoute:lookupRoad};
 })();
 
 </script>
