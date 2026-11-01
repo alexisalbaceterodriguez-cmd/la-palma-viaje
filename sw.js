@@ -1,5 +1,5 @@
-const CACHE = 'la-palma-app-v5';
-const CORE = ['./', './index.html', './icon.svg', './icon-192.png', './manifest.webmanifest', './profiles.js', './profiles.css', './search.js', './search.css'];
+const CACHE = 'la-palma-app-v6';
+const CORE = ['./', './index.html', './icon.svg', './icon-192.png', './manifest.webmanifest', './profiles.js', './profiles.css', './search.js', './search.css', './weather.js', './weather.css'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -26,7 +26,7 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;
   if (event.request.mode !== 'navigate') {
     const file = url.pathname.split('/').pop();
-    if (['profiles.js', 'profiles.css', 'search.js', 'search.css', 'icon.svg', 'icon-192.png', 'manifest.webmanifest'].includes(file)) {
+    if (['profiles.js', 'profiles.css', 'search.js', 'search.css', 'weather.js', 'weather.css', 'icon.svg', 'icon-192.png', 'manifest.webmanifest'].includes(file)) {
       event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request)));
     }
     return;

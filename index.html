@@ -345,6 +345,7 @@ html[data-theme="night"] .pace-action.primary{color:#112c25}
 </style>
 <link rel="stylesheet" href="./profiles.css">
 <link rel="stylesheet" href="./search.css">
+<link rel="stylesheet" href="./weather.css">
 </head>
 <body>
 <section id="splash" hidden aria-label="Bienvenida a La Palma" role="status" aria-live="off">
@@ -453,6 +454,23 @@ html[data-theme="night"] .pace-action.primary{color:#112c25}
      </div>
      <div class="pace-note" id="paceNote">Toca «Comprobar ubicación» para compartir tu posición con OSRM y estimar el trayecto en coche. No sustituye a la aerolínea ni a la navegación.</div>
    </section>
+   <section id="weatherPanel" class="weather-panel" aria-label="Clima por zonas del itinerario">
+     <div class="weather-head">
+       <div>
+         <span class="weather-eyebrow">LA PALMA · METEOROLOGÍA</span>
+         <h3>El tiempo por zonas</h3>
+         <p id="weatherScope">Consultando las condiciones de la isla…</p>
+       </div>
+       <button id="weatherRefresh" class="weather-refresh" type="button" title="Consultar de nuevo el tiempo">↻ Actualizar</button>
+     </div>
+     <div id="weatherCards" class="weather-cards" aria-busy="true">
+       <p class="weather-loading">Cargando tiempo por zonas…</p>
+     </div>
+     <div class="weather-meta">
+       <span id="weatherStatus" role="status" aria-live="polite">Preparando consulta meteorológica…</span>
+       <span>Datos: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> · Comprueba alertas oficiales de <a href="https://www.aemet.es/es/eltiempo/prediccion/avisos" target="_blank" rel="noopener noreferrer">AEMET</a>.</span>
+     </div>
+   </section>
    <div id="dayDetail"></div>
    <section class="extras" id="extras"><div class="sup">Plan B</div><h3>Si queda tiempo</h3><p>Rutas opcionales incluidas en el PDF, no asignadas a un día concreto.</p><div id="extraItems"></div></section>
    <div class="footnote">Cada viajero tiene sus marcas guardadas en el navegador. No hay cuentas ni sincronización entre dispositivos.<br><br>Mapa basado en el itinerario del PDF. Las líneas de puntos muestran el <b>orden propuesto</b>, no el trazado real de la carretera. Google Maps calcula la ruta de conducción. Comprueba horarios, cierres y permisos antes de salir.<br><br>Mapa base © OpenStreetMap contributors. Los puntos visitados se guardan en el perfil activo de este navegador.</div>
@@ -527,7 +545,7 @@ window.leafletReady = new Promise((resolve) => {
  let toastTimer;
  function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3300)}
  function routesForDay(day){const legs=day.route.map(lookup).filter(p=>p?.coords);if(legs.length===0)return [];if(legs.length===1)return [googleDirections(legs[0])];const get=p=>encodeURIComponent(coord(p));const urls=[];for(let i=0;i<legs.length-1;i+=4){const part=legs.slice(i,i+5);urls.push('https://www.google.com/maps/dir/?api=1&origin='+get(part[0])+'&destination='+get(part[part.length-1])+(part.length>2?'&waypoints='+part.slice(1,-1).map(get).join('%7C'):'')+'&travelmode=driving')}return urls}
- function setSelected(id){selected=id;try{const u=new URL(location.href);u.searchParams.set('dia',String(id));history.replaceState(null,'',u)}catch{}render()}
+ function setSelected(id){selected=id;try{const u=new URL(location.href);u.searchParams.set('dia',String(id));history.replaceState(null,'',u)}catch{}render();window.dispatchEvent(new CustomEvent('lapalma:day-changed',{detail:{dayId:id}}))}
  function tabs(){const area=$('tabs');if(!area.childElementCount){area.innerHTML=days.map(d=>`<button role="tab" class="day-tab" data-day="${d.id}"><span class="dnum">${d.id}.</span> ${d.date}</button>`).join('');area.querySelectorAll('button').forEach(b=>b.onclick=()=>setSelected(Number(b.dataset.day)))}area.querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected',String(selected===Number(b.dataset.day))));const active=area.querySelector('[aria-selected=true]');if(active){const left=Math.max(0,active.offsetLeft-area.clientWidth/2+active.offsetWidth/2);area.scrollTo({left,behavior:'instant'})}}
  function stopHtml(id,d,idx){const p=lookup(id),isOptional=d.optional.includes(id),done=!!visited[id],color=colors[d.id-1];const nav=mapsLink(p),title=p.coords?'Cómo llegar':'Buscar ubicación';const foot=p.link?`<a href="${esc(p.link)}" target="_blank" rel="noopener" class="stop-link">↗ ${p.cat==='senderismo'?'Wikiloc':p.cat==='hotel'?'Web alojamiento':'Información / reserva'}</a>`:'';const permit=p.permit?`<a href="${esc(p.permit)}" target="_blank" rel="noopener" class="stop-link">↗ Avisos / permisos</a>`:'';return `<article class="stop ${done?'done':''}" data-spot="${id}"><button class="num focus" data-pin="${id}" style="background:${color}" title="Mostrar en el mapa" aria-label="Mostrar ${esc(p.name)} en el mapa">${idx+1}</button><div class="stop-data"><div class="stop-title">${esc(p.name)}</div><p class="stop-desc">${esc(p.desc)}</p><div class="stop-mini">${isOptional?'<span class="tag opt">Opcional</span>':''}${!p.coords?'<span class="tag unknown">Ubicación sin verificar</span>':''}<a class="stop-link" href="${esc(nav)}" target="_blank" rel="noopener">↗ ${title}</a>${foot}${permit}</div></div><button type="button" class="visit" aria-label="${done?'Desmarcar':'Marcar'} como visitado" aria-pressed="${done}" data-visited="${id}">${done?'✓':'○'}</button></article>`}
  function daySection(d){const finished=d.items.filter(id=>visited[id]).length;const warn=d.id===2||d.id===4;const routes=routesForDay(d);const routeButtons=routes.map((url,i)=>`<a class="primary" href="${esc(url)}" target="_blank" rel="noopener">↗ Google Maps${routes.length>1?' · '+(i+1)+'/'+routes.length:''}</a>`).join('');return `<section class="summary"><div class="sup">Día ${d.id} · ${esc(d.longdate)}</div><h2>${esc(d.title)}</h2><p class="subtitle">${esc(d.subtitle)}</p><div class="notice ${warn?'alert':''}">${esc(d.note)}</div><div class="summary-actions">${routeButtons}<button class="secondary" type="button" id="fitRoute">⌖ Ver recorrido</button></div>${routes.length>1?'<p class="subtitle" style="margin-top:10px">Ruta dividida en tramos para conservar todas las paradas en Google Maps móvil.</p>':''}</section><div class="meta-row"><span class="sectionhead">Paradas del día</span><span class="progress">${finished} / ${d.items.length} visitadas</span></div><div class="stops">${d.items.map((id,i)=>stopHtml(id,d,i)).join('')}</div>`}
@@ -564,6 +582,7 @@ window.leafletReady = new Promise((resolve) => {
 })();
 </script>
 <script src="./search.js"></script>
+<script src="./weather.js"></script>
 <script id="palma-premium-behaviour">
 /* La Palma: automatic Canary Islands daylight theme + premium splash, no dependencies. */
 (()=>{'use strict';

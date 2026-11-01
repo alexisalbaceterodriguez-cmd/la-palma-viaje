@@ -23,6 +23,15 @@ Web estática con mapa interactivo, vista flotante, temas día/noche y asistente
 - **No existe sincronización entre distintos navegadores, teléfonos o dispositivos.** No hay recuperación si se borran los datos del sitio o se usa navegación privada. Los perfiles no constituyen una cuenta autenticada.
 - El JavaScript y CSS de los perfiles se incluyen en la caché del service worker para uso sin conexión.
 
+## Clima por zonas del itinerario (issue #1)
+
+- Se muestra una tarjeta meteorológica para las zonas relevantes del día seleccionado, sin solicitar GPS ni modificar las rutas. En «Todos» se consultan cinco zonas representativas de la isla.
+- Datos estimados de [Open-Meteo](https://open-meteo.com/) mediante su API pública. La integración usa temperatura, estado del cielo, viento y probabilidad de lluvia. Para fechas futuras dentro del horizonte disponible se presentan mínimos/máximos y previsión diaria; en otros casos se muestra el tiempo actual, claramente etiquetado.
+- **El viaje fue del 10 al 17 de octubre de 2026.** Al consultar cualquiera de esas fechas después del viaje, se indica que los datos son del día de hoy, **no observaciones históricas de la fecha original**. El tiempo en la montaña puede variar muy rápidamente. No sustituye los avisos oficiales de AEMET.
+- Se guarda un máximo de 72 horas de datos previos en `localStorage`, con la hora exacta de actualización en Canarias. Los datos se refrescan aproximadamente cada 30 minutos con la web visible y al pulsar «Actualizar». Si la API falla, se muestran los últimos datos válidos disponibles o un mensaje claro; las rutas siguen funcionando.
+- Los archivos `weather.js` y `weather.css` se guardan en el service worker para uso offline de la interfaz. Las consultas de Open-Meteo **no** se guardan en el service worker; solo los resultados obtenidos previamente pueden mostrarse sin red.
+- Se mantiene el despliegue estático en GitHub Pages. Comprueba las [condiciones de uso de Open-Meteo](https://open-meteo.com/en/terms) si cambia a un uso comercial o de alto volumen.
+
 ## Publicación
 
 GitHub Pages despliega desde `main` mediante `.github/workflows/pages.yml`. No se necesita backend, base de datos ni clave API.
