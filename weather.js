@@ -157,9 +157,9 @@
         numeric(data.daily.temperature_2m_max?.[dayIndex]) + '°'
       : numeric(current.temperature_2m, 1) + ' °C';
     const rainIndex = forecast ? dayIndex : data.daily.time.indexOf(today);
-    const rainProbability = rainIndex >= 0
-      ? numeric(data.daily.precipitation_probability_max?.[rainIndex]) + '%'
-      : '—';
+    const chance = rainIndex >= 0 ? data.daily.precipitation_probability_max?.[rainIndex] : null;
+    const rainProbability = typeof chance === 'number' && Number.isFinite(chance)
+      ? numeric(chance) + '%' : '—';
     const wind = forecast ? data.daily.wind_speed_10m_max?.[dayIndex] : current.wind_speed_10m;
     const info = forecast
       ? 'Previsión · ' + target.slice(8, 10) + '/' + target.slice(5, 7)
